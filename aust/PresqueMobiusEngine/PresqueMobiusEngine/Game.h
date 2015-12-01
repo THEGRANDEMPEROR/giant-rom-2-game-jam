@@ -1,20 +1,17 @@
 #pragma once
 #include "Engine.h"
+#include "Button.h"
+#include "MenuSystem.h"
 
-#define WINDOW_TITLE "WEEEEEE"
+#define WINDOW_TITLE "Kojima Gaiden"
+
 
 class Game {
 private:
-	camera cam;
-
-
-	imageAsset testImage;
-	spriteStruct testSprite;
-	renInfo testInfo;
-	textStruct testText;
-	modelAsset* testModel;
-	lineStruct testLine;
-
+	bool showFPS;
+	renInfo tempInfo;
+	textStruct fpsText;
+	MenuSystem menu;
 
 	double fps;
 	char buffer[256];

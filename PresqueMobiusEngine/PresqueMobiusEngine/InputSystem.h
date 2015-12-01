@@ -1,10 +1,10 @@
 /*=======================================
 =InputSystem.h/.cpp						=
 =by Tyler van Gastel					=
-=latest update 11/22/2015				=
+=latest update 11/30/2015				=
 =user input using xinput/directinput	=
 =========================================*/
-
+#pragma once
 #include <Windows.h>
 #include <dinput.h>
 #include <XInput.h>
