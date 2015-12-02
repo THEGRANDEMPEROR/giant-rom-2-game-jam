@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine.h"
+#include "Tetris.h"
 
 #define WINDOW_TITLE "WEEEEEE"
 
@@ -8,12 +9,7 @@ private:
 	camera cam;
 
 
-	imageAsset testImage;
-	spriteStruct testSprite;
-	renInfo testInfo;
-	textStruct testText;
-	modelAsset* testModel;
-	lineStruct testLine;
+	Tetris tetristest;
 
 
 	double fps;

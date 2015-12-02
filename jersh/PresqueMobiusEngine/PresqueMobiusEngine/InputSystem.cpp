@@ -38,8 +38,8 @@ void InputSystem::bind(inputList input, LPCSTR name) {
 	for(int i = 0; i < boundButton.size(); ++i) {
 		if(boundButton[i].name == temp.name) {
 			for(int z = 0; z < 3;++z) {
-				if(temp.buttons[z] == NO_INPUT) {
-					temp.buttons[z] = input;
+				if(boundButton[i].buttons[z] == NO_INPUT) {
+					boundButton[i].buttons[z] = input;
 					return;
 				}
 			}
@@ -134,7 +134,9 @@ void InputSystem::update() {
 		m_pDIKeyboard->GetDeviceState(sizeof(_keyboard),(LPVOID)&_keyboard);
 	if(m_pDIMouse->Acquire()!= DIERR_INPUTLOST)
 		m_pDIMouse->GetDeviceState(sizeof(DIMOUSESTATE2),&_mouse);
-
+	for(int i = 0; i < 4; ++i) {
+		XInputGetState(i,&_pads[i]);
+	}
 }
 
 void InputSystem::restart(HWND& hWnd, HINSTANCE& hInst) {

@@ -86,6 +86,7 @@
     <ClInclude Include="ResourceDefines.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Tetrimino.h" />
     <ClInclude Include="Tetris.h" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +97,7 @@
     <ClCompile Include="RenVector.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Tetrimino.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="winMain.cpp" />
   </ItemGroup>
