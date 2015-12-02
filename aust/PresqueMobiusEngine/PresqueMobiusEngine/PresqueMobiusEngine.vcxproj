@@ -82,6 +82,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="MenuSystem.h" />
+    <ClInclude Include="MessageSystem.h" />
     <ClInclude Include="RenVector.h" />
     <ClInclude Include="ResourceDefines.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="MenuSystem.cpp" />
+    <ClCompile Include="MessageSystem.cpp" />
     <ClCompile Include="RenVector.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sound.cpp" />

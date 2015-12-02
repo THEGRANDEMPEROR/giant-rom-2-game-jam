@@ -19,6 +19,7 @@ public:
 	void update();
 	void clear();
 	void render();
+	void resetSelection(){selection = 0;}
 	void addButton(Button input);
 	void addButton(void (*func)(),const char* label,frect rect,DWORD flags,D3DCOLOR color,D3DCOLOR hcolor);
 };

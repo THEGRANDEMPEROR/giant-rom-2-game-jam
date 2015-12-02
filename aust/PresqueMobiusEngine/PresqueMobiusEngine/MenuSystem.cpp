@@ -46,7 +46,7 @@ void MenuSystem::update() {
 }
 
 void MenuSystem::render() {
-	for(int i = 0; i < buttons.size(); ++i) {
+	for(unsigned int i = 0; i < buttons.size(); ++i) {
 		buttons[i].render(i == selection);
 	}
 }
