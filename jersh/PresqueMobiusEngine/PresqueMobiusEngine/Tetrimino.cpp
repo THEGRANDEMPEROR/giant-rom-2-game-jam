@@ -165,5 +165,11 @@ void Tetrimino::Snap(bool a_snap) {
 }
 
 
+void Tetrimino::SetBlockPos(int a_index, fallingpos a_pos) {
+	blocks[a_index].setPos(a_pos);
+}
+
+
+
 
 

@@ -86,7 +86,7 @@ void Tetris::Init() {
 	Engine::instance()->bind(pad1_START, "Player 1 Start");
 	Engine::instance()->bind(pad1_BACK, "Player 1 Back");
 
-	
+
 
 	numlines = 0;
 	linestosend = 0; // initialize lines
@@ -111,7 +111,7 @@ void Tetris::Update() {
 	//}
 
 
-	TryToMove(0, Engine::instance()->dt());
+
 	if (Engine::instance()->getBind("Player 1 Down DPAD")) {
 		TryToMove(0, 1);
 	}
@@ -121,6 +121,13 @@ void Tetris::Update() {
 	if (Engine::instance()->getBind("Player 1 Left DPAD")) {
 		TryToMove(-1, 0);
 	}
+	if (Engine::instance()->getBind("Player 1 A")) {
+		Rotate(true);
+	}
+	if (Engine::instance()->getBind("Player 1 B")) {
+		Rotate(false);
+	}
+	TryToMove(0, Engine::instance()->dt());
 }
 
 
@@ -223,23 +230,20 @@ void Tetris::Draw() {
 
 
 bool Tetris::DoICollide(int a_x, float a_y) {
-	if (a_x != 0 || a_y != 0.0f) {
-
-		fallingpos temppos;
-		for (int i = 0; i < TETRIMINO_SIZE; ++i) {
-			temppos.x = curtet.getBlock(i).getPos().x + a_x;
-			temppos.y = curtet.getBlock(i).getPos().y + a_y;
-
-			if (temppos.x < 0 || temppos.x >= FIELD_SIZE_X || temppos.y < 0.0f || temppos.y > FIELD_SIZE_Y-1) { // if you're trying to move out of the level
-				return true;
-			}
-			for (int y = 0; y < FIELD_SIZE_Y; ++y) {	// for each y,
-				if (temppos.y - y < 1.0f && temppos.y - y > -1.0f) {				// if that y is within 1.0f of the current position,
-					if (field[temppos.x][y].getStuff() != EMPTY) // then check collision with that space
-						return true;
-				}
+	fallingpos temppos;
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+		temppos.x = curtet.getBlock(i).getPos().x + a_x;
+		temppos.y = curtet.getBlock(i).getPos().y + a_y;
+		if (temppos.x < 0 || temppos.x >= FIELD_SIZE_X || temppos.y < 0.0f || temppos.y > FIELD_SIZE_Y - 1) { // if you're trying to move out of the level
+			return true;
+		}
+		for (int y = 0; y < FIELD_SIZE_Y; ++y) {	// for each y,
+			if (temppos.y - y < 1.0f && temppos.y - y > -1.0f) {				// if that y is within 1.0f of the current position,
+				if (field[temppos.x][y].getStuff() != EMPTY) // then check collision with that space
+					return true;
 			}
 		}
+
 		//if (a_y != 0.0f) {
 		//	for (int y = 0; y < FIELD_SIZE_Y; ++y) {	// for each y,
 		//		if (temppos.y - y < 1.0f) {				// if that y is within 1.0f of the current position,
@@ -298,10 +302,10 @@ Tetrimino Tetris::randomTet() {
 		tet.Init(ZPIECE, magic);
 	else if (random == 6)
 		tet.Init(TPIECE, magic);
-	
-	
+
+
 	return tet;
-	
+
 
 }
 
@@ -355,7 +359,7 @@ void Tetris::removeLine(int a_line) {
 
 	for (int y = a_line; y > 0; --y) { // for each row, starting from a_line and going up(negative), but not doing row 0 cause there's nothing above there
 		for (int x = 0; x < FIELD_SIZE_X; ++x) {// for each column in that row,
-			field[x][y].setStuff(field[x][y-1].getStuff());
+			field[x][y].setStuff(field[x][y - 1].getStuff());
 		}
 	}
 
@@ -369,7 +373,51 @@ void Tetris::removeLine(int a_line) {
 }
 
 
+void Tetris::Rotate(bool clockwise) {
+	fallingpos temppos[TETRIMINO_SIZE];
+	float roundingthing = curtet.getBlock(0).getPos().y; // save a y. This is used because of rounding problems.
+	curtet.Snap(false); // snap it to the grid.
+	roundingthing -= curtet.getBlock(0).getPos().y; // save the decimal after, basically
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) { // copy the current position to temppos
+		temppos[i].x = curtet.getBlock(i).getPos().x;
+		temppos[i].y = curtet.getBlock(i).getPos().y;
+	}
+	
 
+
+	int xChange = 0;
+	float yChange = 0.0f;
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) { // for each block in the tetrimino,
+		if (i != CENTER_TETRIMINO_BLOCK) { // except the center block, which should stay still,
+			xChange = temppos[CENTER_TETRIMINO_BLOCK].x - temppos[i].x;
+			yChange = temppos[CENTER_TETRIMINO_BLOCK].y - temppos[i].y;
+
+			curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x + yChange, temppos[CENTER_TETRIMINO_BLOCK].y + xChange));
+		}
+	}
+
+	xChange = 0;
+	yChange = 0;
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) { // for each block,
+		if (i != CENTER_TETRIMINO_BLOCK) {
+			xChange = temppos[CENTER_TETRIMINO_BLOCK].x - curtet.getBlock(i).getPos().x;
+
+			curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x + xChange, curtet.getBlock(i).getPos().y));
+		}
+	}
+	bool outside = DoICollide(0,0.0f);
+	
+	if (outside) { // change it back if it is outside
+		for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+			curtet.SetBlockPos(i, fallingpos(temppos[i].x, temppos[i].y));
+		}
+	}
+
+	curtet.Move(0, roundingthing);
+
+
+
+}
 
 
 

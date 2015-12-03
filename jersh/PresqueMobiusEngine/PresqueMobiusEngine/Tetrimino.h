@@ -2,6 +2,7 @@
 #include "ResourceDefines.h"
 const int TETRIMINO_SIZE = 4;
 const int NUM_TETRIMINO_TYPES = 7;
+const int CENTER_TETRIMINO_BLOCK = 1;
 
 enum TetriminoType {
 	LINE,
@@ -70,6 +71,7 @@ public:
 	Block getBlock(int a_index);
 	TetriminoType getType();
 	void Snap(bool a_snap); // snaps to grid. true = positive AKA down. false = negative AKA up
+	void SetBlockPos(int a_index, fallingpos a_pos);
 };
 
 

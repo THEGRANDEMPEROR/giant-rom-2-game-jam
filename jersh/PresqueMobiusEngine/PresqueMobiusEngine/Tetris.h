@@ -64,6 +64,7 @@ private:
 	Tetrimino randomTet();	// probably move this out of tetris into wherever we do the tetrimino queue
 	int checkAllLines();
 	void removeLine(int a_line);
+	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
 	
 public:
 	Tetris();
