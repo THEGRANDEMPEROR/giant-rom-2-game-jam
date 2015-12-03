@@ -1,6 +1,7 @@
 #pragma once
-
+#include "ResourceDefines.h"
 const int TETRIMINO_SIZE = 4;
+const int NUM_TETRIMINO_TYPES = 7;
 
 enum TetriminoType {
 	LINE,
@@ -60,13 +61,15 @@ private:
 public:
 	Tetrimino();
 	~Tetrimino();
-	void Init(TetriminoType a_type, bool a_magic);	
-		// Hardcoded starting positions depending on TetriminoType, possibly change that
-		// the magic block will always be Blocks[1] and should probably be rotated around.
+	Tetrimino(Tetrimino &a_tet);
+	void Init(TetriminoType a_type, bool a_magic);
+	// Hardcoded starting positions depending on TetriminoType, possibly change that
+	// the magic block will always be Blocks[1] and should probably be rotated around.
 	void Move(int a_x, float a_y);
 	void Move(int a_x, int a_y);
 	Block getBlock(int a_index);
 	TetriminoType getType();
+	void Snap(bool a_snap); // snaps to grid. true = positive AKA down. false = negative AKA up
 };
 
 

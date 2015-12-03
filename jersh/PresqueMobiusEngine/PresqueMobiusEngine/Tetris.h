@@ -7,9 +7,15 @@
 const int FIELD_SIZE_X = 10; // the width of a standard tetris field
 const int FIELD_SIZE_Y = 22; // the height of a standard tetris field. topmost 2 are hidden, where the new pieces get spawned.
 							// Player loss on a block solidifying in those two spaces.
+const int DEATHZONE = 2; // top two rows equals death if you solidify there.
 
 
 
+const float dropspeed = 10.0f;
+const float basespeed = 1.0f;
+const float twospeed = 1.4f;
+const float threespeed = 1.8f;
+const float fourspeed = 2.2f;
 
 
 
@@ -44,17 +50,30 @@ public:
 class Tetris {
 private:
 	spot field[FIELD_SIZE_X][FIELD_SIZE_Y];
-	int lines;
+	int linestosend;
+	int numlines;
+	int speed;
+	double lasttime;
 	Tetrimino curtet;
 	spriteStruct solidsprite;
 	spriteStruct magicsprite;
+
+
+	void TryToMove(int a_x, float a_y);
+	bool DoICollide(int a_x, float a_y);
+	Tetrimino randomTet();	// probably move this out of tetris into wherever we do the tetrimino queue
+	int checkAllLines();
+	void removeLine(int a_line);
+	
 public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update(int t);
+	void Update();
 	void Draw();
 
+	void Solidify(Tetrimino a_tet);
+	
 };
 
 

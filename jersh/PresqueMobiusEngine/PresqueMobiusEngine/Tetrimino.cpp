@@ -1,6 +1,6 @@
 #pragma once
 #include "Tetrimino.h"
-
+#include "Engine.h"
 
 Block::Block() {
 	magic = false;
@@ -18,6 +18,7 @@ void Block::Init(fallingpos a_pos, bool a_magic) {
 	position.x = a_pos.x;
 	position.y = a_pos.y;
 	magic = a_magic;
+
 }
 
 
@@ -66,7 +67,21 @@ Tetrimino::~Tetrimino() {
 }
 
 
+Tetrimino::Tetrimino(Tetrimino &a_tet) {
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+		blocks[i].setMagic(a_tet.getBlock(i).getMagic());
+		blocks[i].setPos(a_tet.getBlock(i).getPos());
+	}
+	type = a_tet.getType();
+
+}
+
+
 void Tetrimino::Init(TetriminoType a_type, bool a_magic) {
+
+
+
+	type = a_type;
 	if (a_type == LINE) {
 		blocks[0].Init(fallingpos(3, 1.0f), false);
 		blocks[1].Init(fallingpos(4, 1.0f), false);
@@ -135,5 +150,20 @@ Block Tetrimino::getBlock(int a_index) {
 TetriminoType Tetrimino::getType() {
 	return type;
 }
+
+
+void Tetrimino::Snap(bool a_snap) {
+	float temp;
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+		if (a_snap)
+			temp = ceilf(blocks[i].getPos().y) - blocks[i].getPos().y;
+		else
+			temp = floorf(blocks[i].getPos().y) - blocks[i].getPos().y;
+		blocks[i].Move(0, temp);
+	}
+
+}
+
+
 
 

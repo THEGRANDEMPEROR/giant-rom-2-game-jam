@@ -9,7 +9,6 @@ Game::Game() {
 	cam.drawDist = 5000;
 
 	
-
 	fps = 0;
 }
 
@@ -43,9 +42,8 @@ void Game::shutdown() {
 }
 
 bool Game::update() {
-	
 
-
+	tetristest.Update();
 	tetristest.Draw();
 
 
