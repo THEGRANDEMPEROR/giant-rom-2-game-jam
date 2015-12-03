@@ -93,6 +93,27 @@ void Game::createHelp() {
 	menu.addButton(mMenu,"Back",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
 }
 
+void Game::createFinish() {
+	menu.clear();
+	curState = finish;
+
+	frect temp;
+	temp.left = 0.33f;
+	temp.right = 0.66f;
+
+	temp.top = 0.5f;
+	temp.bottom = 0.6f;
+	menu.addButton(NULL,"Replay",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+
+	temp.top = 0.6f;
+	temp.bottom = 0.7f;
+	menu.addButton(charSelect,"Character Select",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+
+	temp.top = 0.7f;
+	temp.bottom = 0.8f;
+	menu.addButton(mMenu,"Exit",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+}
+
 Game::Game() {
 	_rensa = false;
 	_magic = true;
@@ -110,17 +131,49 @@ Game::Game() {
 
 	fps = 0;
 	play = true;
-	
+
 	createMenu();
 
-	//game pad menu bind
-	Engine::instance()->bind(pad1_LYp,"SelectionUp");
-	Engine::instance()->bind(pad1_LYn,"SelectionDown");
-	Engine::instance()->bind(pad1_A,"Accept");
-	//keyboard
-	Engine::instance()->bind(W,"SelectionUp");
-	Engine::instance()->bind(S,"SelectionDown");
-	Engine::instance()->bind(SPACE,"Accept");
+	int numControllers = 0;
+	XINPUT_STATE tempState;
+	for(int i = 0; i < 2; ++i) {
+		if(XInputGetState(i,&tempState) != ERROR_DEVICE_NOT_CONNECTED) {
+			++numControllers;
+		}
+	}
+
+	//bind types
+	if(numControllers > 1) {
+		//two controllers
+		//game pad menu bind
+		Engine::instance()->bind(pad1_LYp,"SelectionUp");
+		Engine::instance()->bind(pad1_LYn,"SelectionDown");
+		Engine::instance()->bind(pad1_A,"Accept");
+		//keyboard
+		Engine::instance()->bind(W,"SelectionUp");
+		Engine::instance()->bind(S,"SelectionDown");
+		Engine::instance()->bind(SPACE,"Accept");
+		//p2 character select
+		Engine::instance()->bind(pad2_LYp,"SelectionUp2");
+		Engine::instance()->bind(pad2_LYn,"SelectionDown2");
+		Engine::instance()->bind(pad2_A,"Accept2");
+	} else {
+		//one controller
+		//keyboard
+		Engine::instance()->bind(W,"SelectionUp");
+		Engine::instance()->bind(S,"SelectionDown");
+		Engine::instance()->bind(SPACE,"Accept");
+		//p2 character select
+		Engine::instance()->bind(pad1_LYp,"SelectionUp2");
+		Engine::instance()->bind(pad1_LYn,"SelectionDown2");
+		Engine::instance()->bind(pad1_A,"Accept2");
+	}
+
+	p1Name.flags = DT_CENTER;
+	p1Name.color = 0xFFFF0000;
+
+	p2Name.flags = DT_CENTER;
+	p2Name.color = 0xFF0000FF;
 }
 
 Game::~Game() {
@@ -128,41 +181,184 @@ Game::~Game() {
 }
 
 void Game::init() {
+	CharacterInfo tempChar;
+	tempChar.icon.rec.top = 0;
+	tempChar.icon.rec.left = 0;
+	tempChar.icon.color = 0xFFFFFFFF;
 
+	tempChar.name = "Drew Scanlon";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = NULL;
+	}
+
+	charList.push_back(tempChar);
+
+	//Dan Ryckert
+	tempChar.name = "Dan Ryckert";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DanRyckert.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = NULL;
+	}
+
+	charList.push_back(tempChar);
+
+	tempChar.name = "Hideo Kojima";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("HideoMB2.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = NULL;
+	}
+
+	charList.push_back(tempChar);
 }
 
 void Game::shutdown() {
 
 }
 
-bool Game::update() {
-	if(curState != gplay) {
-		menu.update();
-		menu.render();
+void Game::startTetris() {
+	curState = mmenu;
+	menu.resetSelection();
+	createMenu();
+}
 
-		//if(Engine::instance()->getMessage("CharSelect"))
-		if(Engine::instance()->getMessage("MainMenu")) {
-			menu.resetSelection();
-			createMenu();
-		}
-		if(Engine::instance()->getMessage("Options")) {
-			menu.resetSelection();
-			createOptions();
-		}
-		if(Engine::instance()->getMessage("Help")) {
-			menu.resetSelection();
-			createHelp();
-		}
-		if(Engine::instance()->getMessage("Quit")) {
-			play = false;
-		}
-		if(Engine::instance()->getMessage("ToggleRensa")) {
-			_rensa = !_rensa;
-			createOptions();
-		}
-		if(Engine::instance()->getMessage("ToggleMagic")) {
-			_magic = !_magic;
-			createOptions();
+bool Game::update() {
+	frect tempRec;
+	if(curState != gplay) {
+		if(curState != cselect) {
+			menu.update();
+			menu.render();
+
+			if(Engine::instance()->getMessage("CharSelect")) {
+				menu.resetSelection();
+				p1Lock = false;
+				p2Lock = false;
+				p1Select = 0;
+				p2Select = 0;
+				curState = cselect;
+			}
+			if(Engine::instance()->getMessage("MainMenu")) {
+				menu.resetSelection();
+				createMenu();
+			}
+			if(Engine::instance()->getMessage("Options")) {
+				menu.resetSelection();
+				createOptions();
+			}
+			if(Engine::instance()->getMessage("Help")) {
+				menu.resetSelection();
+				createHelp();
+			}
+			if(Engine::instance()->getMessage("Quit")) {
+				play = false;
+			}
+			if(Engine::instance()->getMessage("ToggleRensa")) {
+				_rensa = !_rensa;
+				createOptions();
+			}
+			if(Engine::instance()->getMessage("ToggleMagic")) {
+				_magic = !_magic;
+				createOptions();
+			}
+		} else {
+			//character select menu
+			if(!p1Lock) {
+				if(Engine::instance()->getButton("SelectionUp")) {
+					--p1Select;
+				} else if(Engine::instance()->getButton("SelectionDown")) {
+					++p1Select;
+				} else if(Engine::instance()->getButton("Accept")) {
+					p1Lock = true;
+				}
+
+				if(p1Select < 0) {
+					p1Select = charList.size()-1;
+				} else if(p1Select >= charList.size()) {
+					p1Select = 0;
+				}
+			}
+
+			if(!p2Lock) {
+				if(Engine::instance()->getButton("SelectionUp2")) {
+					--p2Select;
+				} else if(Engine::instance()->getButton("SelectionDown2")) {
+					++p2Select;
+				} else if(Engine::instance()->getButton("Accept2")) {
+					p2Lock = true;
+				}
+
+				if(p2Select < 0) {
+					p2Select = charList.size() - 1;
+				} else if(p2Select >= charList.size()) {
+					p2Select = 0;
+				}
+			}
+
+			//draw character select
+			tempInfo.type = text;
+
+			if(p1Lock) {
+				tempRec.top = 0.1f;
+				tempRec.bottom = 0.2f;
+				tempRec.left = 0.0f;
+				tempRec.right = 0.5f;
+				p1Name.text = charList[p1Select].name;
+			} else {
+				tempRec.top = (p1Select*0.33f);
+				tempRec.bottom = tempRec.top + 0.1;
+				tempRec.left = 0.4f;
+				tempRec.right = 0.6f;
+				p1Name.text = "P1";
+			}
+			p1Name.rect = tempRec;
+			tempInfo.asset = &p1Name;
+			Engine::instance()->addRender(tempInfo);
+
+			if(p2Lock) {
+				tempRec.top = 0.1f;
+				tempRec.bottom = 0.2f;
+				tempRec.left = 0.5f;
+				tempRec.right = 1.0f;
+				p2Name.text = charList[p2Select].name;
+			} else {
+				tempRec.top = 0.2+(p2Select*0.33f);
+				tempRec.bottom = tempRec.top + 0.1;
+				tempRec.left = 0.4f;
+				tempRec.right = 0.6f;
+				p2Name.text = "P2";
+			}
+
+			p2Name.rect = tempRec;
+			tempInfo.asset = &p2Name;
+			Engine::instance()->addRender(tempInfo);
+
+			tempInfo.type = screenSprite;
+			for(int i = 0; i < charList.size(); ++i) {
+				tempInfo.asset = &charList[i].icon;
+				D3DXMatrixIdentity(&tempInfo.matrix);
+				D3DXMatrixIdentity(&charTrans);
+				D3DXMatrixScaling(&tempInfo.matrix,240.0f/charList[i].icon.image->texInfo.Width,240.0f/charList[i].icon.image->texInfo.Height,0);
+				D3DXMatrixTranslation(&charTrans,1280.0f/2,120+(i*240),0);
+				D3DXMatrixMultiply(&tempInfo.matrix,&tempInfo.matrix,&charTrans);
+				Engine::instance()->addRender(tempInfo);
+			}
+			if(p1Lock&&p2Lock) {
+				//start game
+				startTetris();
+			}
+
 		}
 	}
 
