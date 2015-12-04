@@ -63,6 +63,8 @@ public:
 	*/
 	bool getButton(inputList input);
 	bool getButton(LPCSTR Name);
+	char getFlags(LPCSTR Name);
+	void setRepeat(float repeat) { inputSys.setRepeat(repeat);}
 
 	resourceStruct* getResource(LPCSTR name, resourceType type);
 	//

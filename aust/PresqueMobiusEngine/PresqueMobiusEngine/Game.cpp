@@ -222,6 +222,7 @@ void Game::init() {
 	}
 
 	charList.push_back(tempChar);
+	Engine::instance()->setRepeat(0.2f);
 }
 
 void Game::shutdown() {
@@ -232,6 +233,7 @@ void Game::startTetris() {
 	curState = mmenu;
 	menu.resetSelection();
 	createMenu();
+	Engine::instance()->setRepeat(0.1f);
 }
 
 bool Game::update() {
@@ -275,11 +277,11 @@ bool Game::update() {
 		} else {
 			//character select menu
 			if(!p1Lock) {
-				if(Engine::instance()->getButton("SelectionUp")) {
+				if(Engine::instance()->getFlags("SelectionUp")&buttonFlags::_repeat) {
 					--p1Select;
-				} else if(Engine::instance()->getButton("SelectionDown")) {
+				} else if(Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat) {
 					++p1Select;
-				} else if(Engine::instance()->getButton("Accept")) {
+				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_repeat) {
 					p1Lock = true;
 				}
 
@@ -291,11 +293,11 @@ bool Game::update() {
 			}
 
 			if(!p2Lock) {
-				if(Engine::instance()->getButton("SelectionUp2")) {
+				if(Engine::instance()->getFlags("SelectionUp2")&buttonFlags::_repeat) {
 					--p2Select;
-				} else if(Engine::instance()->getButton("SelectionDown2")) {
+				} else if(Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat) {
 					++p2Select;
-				} else if(Engine::instance()->getButton("Accept2")) {
+				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_repeat) {
 					p2Lock = true;
 				}
 

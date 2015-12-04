@@ -190,6 +190,10 @@ bool Engine::getButton(LPCSTR Name) {
 	return inputSys.getButton(Name);
 }
 
+char Engine::getFlags(LPCSTR Name) {
+	return inputSys.getFlag(Name);
+}
+
 void Engine::setLight(int num,D3DLIGHT9& light,bool active) {
 	vFrame.setLight(num,light,active);
 }
