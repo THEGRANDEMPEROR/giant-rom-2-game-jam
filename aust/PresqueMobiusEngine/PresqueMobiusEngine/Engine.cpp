@@ -148,6 +148,10 @@ resourceStruct* Engine::getResource(LPCSTR name, resourceType type) {
 	return resMan.getResource(name,type);
 }
 
+resourceStruct* Engine::getResource(LPCSTR name, D3DXCOLOR color) {
+	return resMan.getResource(name,color);
+}
+
 float Engine::getBind(LPCSTR Name) {
 	return inputSys.getBind(Name);
 }

@@ -70,8 +70,9 @@ resourceStruct* ResourceManager::getResource(LPCSTR name, D3DXCOLOR mask) {
 	tempRes.resType = image;
 	Engine::instance()->getvFrame()->loadImage(name,mask,&tempImage);
 	imageList.push_back(tempImage);
-	tempRes.resource = &imageList.back();
 
+	tempRes.resource = &imageList.back();
+	resVec.push_back(tempRes);
 	return &resVec[resVec.size()-1];
 }
 

@@ -181,7 +181,7 @@ Game::~Game() {
 }
 
 void Game::init() {
-	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",image)->resource;
+	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",D3DXCOLOR(255,0,0,0))->resource;
 	backGround.color = 0xFFFFFFFF;
 	backGround.rec.left = 0;
 	backGround.rec.top = 0;

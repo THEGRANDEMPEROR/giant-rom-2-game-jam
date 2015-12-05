@@ -67,6 +67,7 @@ public:
 	void setRepeat(float repeat) { inputSys.setRepeat(repeat);}
 
 	resourceStruct* getResource(LPCSTR name, resourceType type);
+	resourceStruct* getResource(LPCSTR name, D3DXCOLOR color);
 	//
 	void addRender(renInfo& ren);
 	//call this to set camera position and listener velocity
