@@ -287,3 +287,44 @@ void ResourceManager::release() {
 	}
 	resVec.clear();
 }
+
+void ResourceManager::release(LPCSTR assetName) {
+	int temp;
+	for(int i = 0; i < resVec.size(); ++i) {
+		if(resVec[i].name == assetName) {
+			switch(resVec[i].resType) {
+			case image:
+				((imageAsset*)resVec[i].resource)->objTex->Release();
+				imageList.remove(*(imageAsset*)resVec[i].resource);
+				break;
+
+			case cube:
+				((cubeAsset*)resVec[i].resource)->objInd->Release();
+				((cubeAsset*)resVec[i].resource)->objDec->Release();
+				((cubeAsset*)resVec[i].resource)->obj->Release();
+				cubeList.remove(*(cubeAsset*)resVec[i].resource);
+				break;
+
+			case xModel:
+				((modelAsset*)resVec[i].resource)->adj->Release();
+				((modelAsset*)resVec[i].resource)->matPoint->Release();
+				((modelAsset*)resVec[i].resource)->mesh->Release();
+				delete [] ((modelAsset*)resVec[i].resource)->textures;
+				modelList.remove(*(modelAsset*)resVec[i].resource);
+				break;
+
+			case audio:
+				((soundStruct*)resVec[i].resource)->asset->release();
+				soundList.remove(*(soundStruct*)resVec[i].resource);
+				break;
+
+			case stream:
+				((musicStruct*)resVec[i].resource)->asset->release();
+				musicList.remove(*(musicStruct*)resVec[i].resource);
+				break;
+			}
+			resVec.erase(resVec.begin()+i);
+			return;
+		}
+	}
+}

@@ -32,5 +32,5 @@ public:
 	void reload(LPCSTR assetName);
 	void reload(resourceType type);
 	void release();
-	//void release(LPCSTR assetName);
+	void release(LPCSTR assetName);
 };
