@@ -26,6 +26,8 @@ Graphics::Graphics() {
 	for(int i = 0; i < MAX_LIGHTS; ++i) {
 		_lights[i].Range = 0;
 	}
+
+	clearColor =  D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Graphics::~Graphics() {
@@ -137,7 +139,7 @@ void Graphics::render() {
 	lineStruct* tempLine;
 	RECT tempRect;
 	renSize = ren.getSize();
-	if(D3D_OK==(m_pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0))) {
+	if(D3D_OK==(m_pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clearColor, 1.0f, 0))) {
 		if(SUCCEEDED(m_pD3DDevice->BeginScene())) {
 			//trying an alternitive of what I did in elimbination,
 			//the idea is that not changing the type of thing being rendered will be more efficent and make up for the repeted loops, might change after testing
@@ -330,6 +332,11 @@ void Graphics::loadImage(LPCSTR FileName,imageAsset* asset) {
 	D3DXCreateTextureFromFileEx(m_pD3DDevice,FileName,0,0,0,0,D3DFMT_UNKNOWN,D3DPOOL_MANAGED,D3DX_DEFAULT,D3DX_DEFAULT,asset->mask,&asset->texInfo,0,&asset->objTex);
 }
 
+void Graphics::loadImage(LPCSTR FileName, D3DXCOLOR mask, imageAsset* asset) {
+	asset->mask = mask;
+	D3DXCreateTextureFromFileEx(m_pD3DDevice,FileName,0,0,0,0,D3DFMT_UNKNOWN,D3DPOOL_MANAGED,D3DX_DEFAULT,D3DX_DEFAULT,asset->mask,&asset->texInfo,0,&asset->objTex);
+}
+
 void Graphics::setLight(int num,D3DLIGHT9& light,bool active) {
 	if(num >= 0 && num < MAX_LIGHTS) {
 		_lights[num] = light;
@@ -338,6 +345,10 @@ void Graphics::setLight(int num,D3DLIGHT9& light,bool active) {
 			m_pD3DDevice->LightEnable(num,active);
 		}
 	}
+}
+
+void Graphics::setClearColor(D3DXCOLOR color) {
+	clearColor = color;
 }
 
 D3DLIGHT9* Graphics::getLight(int num) {

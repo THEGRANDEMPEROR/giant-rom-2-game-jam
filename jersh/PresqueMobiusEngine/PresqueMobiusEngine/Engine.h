@@ -67,6 +67,7 @@ public:
 	void setRepeat(float repeat) { inputSys.setRepeat(repeat);}
 
 	resourceStruct* getResource(LPCSTR name, resourceType type);
+	resourceStruct* getResource(LPCSTR name, D3DXCOLOR color);
 	//
 	void addRender(renInfo& ren);
 	//call this to set camera position and listener velocity
@@ -74,15 +75,15 @@ public:
 	//call this to set camera positions, sets listener velocity to 0,0,0
 	void setCam(camera* cam);
 	void setLight(int num,D3DLIGHT9& light,bool active);
+	void setClearColor(D3DXCOLOR color);
 	D3DLIGHT9* getLight(int num);
 	void playSound(soundStruct sound, vector pos, vector vel);
 	void playMusic(musicStruct stream, bool muted);
+	void clearMessages() {mesSys.clear();}
+	bool getMessage(std::string message){return mesSys.getMessage(message);}
+	void postMessage(std::string message){mesSys.post(message);}
 	//direct access to sound and graphics, avoid using if you can
 	Graphics* getvFrame() {return &vFrame;}
 	Sound* getsFrame() {return &sFrame;}
 	InputSystem* getInputSys() {return &inputSys;}
-	void clearMessages() {mesSys.clear();}
-	bool getMessage(std::string message){return mesSys.getMessage(message);}
-	void postMessage(std::string message){mesSys.post(message);}
 };
-

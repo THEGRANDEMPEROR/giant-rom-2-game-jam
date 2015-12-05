@@ -146,8 +146,8 @@ void InputSystem::update() {
 	for(int i = 0; i < boundButton.size(); ++i) {
 		tempFlag = 0x00;
 		if(getBind(boundButton[i].name.c_str())) {
-			if(boundButton[i].flags & buttonFlags::_pushed) {
-				tempFlag = buttonFlags::_pushed;
+			if(boundButton[i].flags & buttonFlags::_held) {
+				tempFlag = buttonFlags::_held;
 				boundButton[i]._tRepeat -= Engine::instance()->dt();
 				if(boundButton[i]._tRepeat <= 0) {
 					tempFlag = tempFlag | buttonFlags::_repeat;
@@ -160,7 +160,7 @@ void InputSystem::update() {
 				boundButton[i]._tRepeat = repeatTime;
 			}
 		} else {
-			if(boundButton[i].flags & buttonFlags::_pushed) {
+			if(boundButton[i].flags & buttonFlags::_held) {
 				tempFlag = buttonFlags::_released;
 			}
 		}

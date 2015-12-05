@@ -16,6 +16,13 @@ const float basespeed = 1.0f;
 const float twospeed = 1.4f;
 const float threespeed = 1.8f;
 const float fourspeed = 2.2f;
+const float timetogofastsideways = 0.25f; // The time it takes for it to quickly move sideways while holding either direction
+
+const int xOffsetP1 = 128;
+const int yOffsetP1 = 32;
+
+const int xOffsetP2 = 768;
+const int yOffsetP2 = 32;
 
 
 
@@ -53,15 +60,22 @@ private:
 	int linestosend;
 	int numlines;
 	int speed;
-	double lasttime;
+	float timeheld;
+	bool iNeedATetrimino;
 	Tetrimino curtet;
-	spriteStruct solidsprite;
+	spriteStruct bluesprite;
 	spriteStruct magicsprite;
+	spriteStruct darkbluesprite;
+	spriteStruct greensprite;
+	spriteStruct greysprite;
+	spriteStruct orangesprite;
+	spriteStruct purplesprite;
+	spriteStruct redsprite;
+	spriteStruct yellowsprite;
 
 
 	void TryToMove(int a_x, float a_y);
 	bool DoICollide(int a_x, float a_y);
-	Tetrimino randomTet();	// probably move this out of tetris into wherever we do the tetrimino queue
 	int checkAllLines();
 	void removeLine(int a_line);
 	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
@@ -70,11 +84,12 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update();
-	void Draw();
+	void Update(int a_controller);
+	void Draw(int a_player);
+	void Reset();
 
-	void Solidify(Tetrimino a_tet);
-	
+	void Solidify();
+	int LinesToSend();
 };
 
 

@@ -39,16 +39,22 @@
     <ClInclude Include="InputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tetris.h">
+    <ClInclude Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tetrimino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TetrisGame.h">
+    <ClInclude Include="Tetris.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageSystem.h">
+    <ClInclude Include="TetrisGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,13 +83,19 @@
     <ClCompile Include="InputSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tetris.cpp">
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tetrimino.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageSystem.cpp">
+    <ClCompile Include="Tetris.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TetrisGame.cpp">

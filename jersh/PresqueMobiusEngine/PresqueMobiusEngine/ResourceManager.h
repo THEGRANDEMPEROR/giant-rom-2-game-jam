@@ -26,10 +26,11 @@ public:
 	ResourceManager();
 	~ResourceManager();
 	resourceStruct* getResource(LPCSTR fileName, resourceType resType);
+	resourceStruct* getResource(LPCSTR fileName, D3DXCOLOR mask);
 	resourceStruct* createCube(LPCSTR name, float top, float bottom, float front, float back, float left, float right);
 	void reload();
 	void reload(LPCSTR assetName);
 	void reload(resourceType type);
 	void release();
-	//void release(LPCSTR assetName);
+	void release(LPCSTR assetName);
 };

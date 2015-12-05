@@ -37,22 +37,70 @@ Tetris::~Tetris() {
 
 
 void Tetris::Init() {
-	// Initialize the solidified block sprite
-	solidsprite.image = (imageAsset*)Engine::instance()->getResource("element_blue_square.png", image)->resource;
-	solidsprite.rec.top = 0;
-	solidsprite.rec.left = 0;
-	solidsprite.rec.right = solidsprite.image->texInfo.Width;
-	solidsprite.rec.bottom = solidsprite.image->texInfo.Height;
-	solidsprite.color = 0xFFFFFFFF;
-	solidsprite.center = D3DXVECTOR3(solidsprite.image->texInfo.Width / 2.0f, solidsprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the blue sprite
+	bluesprite.image = (imageAsset*)Engine::instance()->getResource("element_blue_square.png", image)->resource;
+	bluesprite.rec.top = 0;
+	bluesprite.rec.left = 0;
+	bluesprite.rec.right = bluesprite.image->texInfo.Width;
+	bluesprite.rec.bottom = bluesprite.image->texInfo.Height;
+	bluesprite.color = 0xFFFFFFFF;
+	bluesprite.center = D3DXVECTOR3(bluesprite.image->texInfo.Width / 2.0f, bluesprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the magic sprite
-	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_yellow_square.png", image)->resource;
+	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
 	magicsprite.rec.top = 0;
 	magicsprite.rec.left = 0;
 	magicsprite.rec.right = magicsprite.image->texInfo.Width;
 	magicsprite.rec.bottom = magicsprite.image->texInfo.Height;
 	magicsprite.color = 0xFFFFFFFF;
 	magicsprite.center = D3DXVECTOR3(magicsprite.image->texInfo.Width / 2.0f, magicsprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the dark blue sprite
+	darkbluesprite.image = (imageAsset*)Engine::instance()->getResource("element_dark_blue_square.png", image)->resource;
+	darkbluesprite.rec.top = 0;
+	darkbluesprite.rec.left = 0;
+	darkbluesprite.rec.right = darkbluesprite.image->texInfo.Width;
+	darkbluesprite.rec.bottom = darkbluesprite.image->texInfo.Height;
+	darkbluesprite.color = 0xFFFFFFFF;
+	darkbluesprite.center = D3DXVECTOR3(darkbluesprite.image->texInfo.Width / 2.0f, darkbluesprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the green sprite
+	greensprite.image = (imageAsset*)Engine::instance()->getResource("element_green_square.png", image)->resource;
+	greensprite.rec.top = 0;
+	greensprite.rec.left = 0;
+	greensprite.rec.right = greensprite.image->texInfo.Width;
+	greensprite.rec.bottom = greensprite.image->texInfo.Height;
+	greensprite.color = 0xFFFFFFFF;
+	greensprite.center = D3DXVECTOR3(greensprite.image->texInfo.Width / 2.0f, greensprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the grey sprite
+	greysprite.image = (imageAsset*)Engine::instance()->getResource("element_grey_square.png", image)->resource;
+	greysprite.rec.top = 0;
+	greysprite.rec.left = 0;
+	greysprite.rec.right = greysprite.image->texInfo.Width;
+	greysprite.rec.bottom = greysprite.image->texInfo.Height;
+	greysprite.color = 0xFFFFFFFF;
+	greysprite.center = D3DXVECTOR3(greysprite.image->texInfo.Width / 2.0f, greysprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the orange sprite
+	orangesprite.image = (imageAsset*)Engine::instance()->getResource("element_orange_square.png", image)->resource;
+	orangesprite.rec.top = 0;
+	orangesprite.rec.left = 0;
+	orangesprite.rec.right = orangesprite.image->texInfo.Width;
+	orangesprite.rec.bottom = orangesprite.image->texInfo.Height;
+	orangesprite.color = 0xFFFFFFFF;
+	orangesprite.center = D3DXVECTOR3(orangesprite.image->texInfo.Width / 2.0f, orangesprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the red sprite
+	redsprite.image = (imageAsset*)Engine::instance()->getResource("element_red_square.png", image)->resource;
+	redsprite.rec.top = 0;
+	redsprite.rec.left = 0;
+	redsprite.rec.right = redsprite.image->texInfo.Width;
+	redsprite.rec.bottom = redsprite.image->texInfo.Height;
+	redsprite.color = 0xFFFFFFFF;
+	redsprite.center = D3DXVECTOR3(redsprite.image->texInfo.Width / 2.0f, redsprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the yellow sprite
+	yellowsprite.image = (imageAsset*)Engine::instance()->getResource("element_yellow_square.png", image)->resource;
+	yellowsprite.rec.top = 0;
+	yellowsprite.rec.left = 0;
+	yellowsprite.rec.right = yellowsprite.image->texInfo.Width;
+	yellowsprite.rec.bottom = yellowsprite.image->texInfo.Height;
+	yellowsprite.color = 0xFFFFFFFF;
+	yellowsprite.center = D3DXVECTOR3(yellowsprite.image->texInfo.Width / 2.0f, yellowsprite.image->texInfo.Height / 2.0f, 0);
 
 	for (int y = 0; y < FIELD_SIZE_Y; ++y) {
 		for (int x = 0; x < FIELD_SIZE_X; ++x) {
@@ -75,25 +123,15 @@ void Tetris::Init() {
 
 	// end of test stuff
 
-	Engine::instance()->bind(pad1_RIGHT, "Player 1 Right DPAD");
-	Engine::instance()->bind(pad1_UP, "Player 1 Up DPAD");
-	Engine::instance()->bind(pad1_LEFT, "Player 1 Left DPAD");
-	Engine::instance()->bind(pad1_DOWN, "Player 1 Down DPAD");
-	Engine::instance()->bind(pad1_A, "Player 1 A");
-	Engine::instance()->bind(pad1_B, "Player 1 B");
-	Engine::instance()->bind(pad1_X, "Player 1 X");
-	Engine::instance()->bind(pad1_Y, "Player 1 Y");
-	Engine::instance()->bind(pad1_START, "Player 1 Start");
-	Engine::instance()->bind(pad1_BACK, "Player 1 Back");
-
 
 
 	numlines = 0;
 	linestosend = 0; // initialize lines
 	speed = 1;
-	lasttime = 0;
+	timeheld = 0.0f;
+	iNeedATetrimino = true;
 
-	curtet.Init(LINE, false);
+	curtet.Init(LINE, true);
 
 
 
@@ -101,7 +139,7 @@ void Tetris::Init() {
 }
 
 
-void Tetris::Update() {
+void Tetris::Update(int a_controller) {
 	//int random = 0;
 	//int random1 = 0;
 	//if (Engine::instance()->getBind("Player 1 A")) {
@@ -110,33 +148,93 @@ void Tetris::Update() {
 	//	field[random][random1].setStuff(BLOCK);
 	//}
 
-
-
-	if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_pushed) {
-		TryToMove(0, 1);
+	if (a_controller == 1) { // gamepad 1
+		Engine::instance()->setRepeat(0.05f);
+		if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_repeat) {
+			TryToMove(0, 1);
+		}
+		if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_pushed) {
+			TryToMove(1, 0);
+		}
+		if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_repeat) {
+					TryToMove(1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_pushed) {
+			TryToMove(-1, 0);
+		}
+		if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_repeat) {
+					TryToMove(-1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_pushed) {
+			Rotate(true);
+		}
+		if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_pushed) {
+			Rotate(false);
+		}
+		TryToMove(0, Engine::instance()->dt());
 	}
-	if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_held) {
-		TryToMove(1, 0);
+	else if (a_controller == 2) { // gamepad 2
+		Engine::instance()->setRepeat(0.05f);
+		if (Engine::instance()->getFlags("Player 2 Down DPAD")&buttonFlags::_repeat) {
+			TryToMove(0, 1);
+		}
+		if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_pushed) {
+			TryToMove(1, 0);
+		}
+		if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_repeat) {
+					TryToMove(1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_pushed) {
+			TryToMove(-1, 0);
+		}
+		if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_repeat) {
+					TryToMove(-1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Player 2 A")&buttonFlags::_pushed) {
+			Rotate(true);
+		}
+		if (Engine::instance()->getFlags("Player 2 B")&buttonFlags::_pushed) {
+			Rotate(false);
+		}
+		TryToMove(0, Engine::instance()->dt());
 	}
-	if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_held) {
-		TryToMove(-1, 0);
-	}
-	if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_held) {
-		Rotate(true);
-	}
-	if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_held) {
-		Rotate(false);
-	}
-	TryToMove(0, Engine::instance()->dt());
 }
 
 
-void Tetris::Draw() {
+void Tetris::Draw(int a_player) {
 	D3DXMATRIX translation, scaling;
 
 	renInfo tempinfo;
 	tempinfo.type = screenSprite;
-	tempinfo.asset = &solidsprite; // set it to solid sprite, just in case.
+	tempinfo.asset = &bluesprite; // set it to blue sprite, just in case.
 
 	// Draw the whole field of solidified blocks.
 	// Add offsets later
@@ -146,15 +244,19 @@ void Tetris::Draw() {
 			if (field[x][y].getStuff() != EMPTY) {	// if the spot ISN'T empty
 				if (field[x][y].getStuff() == BLOCK) {
 					tempinfo.type = screenSprite;
-					tempinfo.asset = &solidsprite;
+					tempinfo.asset = &bluesprite;
 
 					// Matrix transformation
 					D3DXMatrixIdentity(&translation);
 					D3DXMatrixIdentity(&scaling);
 					D3DXMatrixIdentity(&tempinfo.matrix);
 
-
-					D3DXMatrixTranslation(&translation, (solidsprite.rec.right*x), (solidsprite.rec.bottom*y), 0.0f);
+					if (a_player == 0) {
+						D3DXMatrixTranslation(&translation, (bluesprite.rec.right*x + xOffsetP1), (bluesprite.rec.bottom*y + yOffsetP1), 0.0f);
+					}
+					else {
+						D3DXMatrixTranslation(&translation, (bluesprite.rec.right*x + xOffsetP2), (bluesprite.rec.bottom*y + yOffsetP2), 0.0f);
+					}
 					D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 					D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
 
@@ -171,8 +273,12 @@ void Tetris::Draw() {
 					D3DXMatrixIdentity(&scaling);
 					D3DXMatrixIdentity(&tempinfo.matrix);
 
-
-					D3DXMatrixTranslation(&translation, (magicsprite.rec.right*x), (magicsprite.rec.bottom*y), 0.0f);
+					if (a_player == 0) {
+						D3DXMatrixTranslation(&translation, (magicsprite.rec.right*x+xOffsetP1), (magicsprite.rec.bottom*y+yOffsetP1), 0.0f);
+					}
+					else  {
+						D3DXMatrixTranslation(&translation, (magicsprite.rec.right*x + xOffsetP2), (magicsprite.rec.bottom*y + yOffsetP2), 0.0f);
+					}
 					D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 					D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
 
@@ -186,15 +292,19 @@ void Tetris::Draw() {
 	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
 		if (!curtet.getBlock(i).getMagic()) {
 			tempinfo.type = screenSprite;
-			tempinfo.asset = &solidsprite;
+			tempinfo.asset = &bluesprite;
 
 			// Matrix transformation
 			D3DXMatrixIdentity(&translation);
 			D3DXMatrixIdentity(&scaling);
 			D3DXMatrixIdentity(&tempinfo.matrix);
 
-
-			D3DXMatrixTranslation(&translation, (solidsprite.rec.right*curtet.getBlock(i).getPos().x), (solidsprite.rec.bottom*curtet.getBlock(i).getPos().y), 0.0f);
+			if (a_player == 0) {
+				D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x+xOffsetP1), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y+yOffsetP1), 0.0f);
+			}
+			else {
+				D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
+			}
 			D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 			D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
 
@@ -213,8 +323,12 @@ void Tetris::Draw() {
 			D3DXMatrixIdentity(&scaling);
 			D3DXMatrixIdentity(&tempinfo.matrix);
 
-
-			D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y), 0.0f);
+			if (a_player == 0) {
+				D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x+xOffsetP1), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y+yOffsetP1), 0.0f);
+			}
+			else {
+				D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
+			}
 			D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 			D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
 
@@ -226,6 +340,21 @@ void Tetris::Draw() {
 
 
 
+}
+
+
+void Tetris::Reset() {
+	numlines = 0;
+	speed = 1;
+	linestosend = 0;
+	//curtet = randomTet();
+	for (int x = 0; x < FIELD_SIZE_X; ++x) {
+		for (int y = 0; y < FIELD_SIZE_Y; ++y) {
+			field[x][y].setStuff(EMPTY);
+		}
+	}
+	timeheld = 0.0f;
+	iNeedATetrimino = true;
 }
 
 
@@ -275,42 +404,13 @@ void Tetris::TryToMove(int a_x, float a_y) {
 			else
 				curtet.Snap(false);
 
-			Solidify(randomTet());
+			Solidify();
 		}
 	}
 }
 
 
-Tetrimino Tetris::randomTet() {
-	int random = rand() % NUM_TETRIMINO_TYPES; // chance to be each type
-	int random2 = rand() % 5; // chance to be magic
-	bool magic = false;
-	Tetrimino tet;
-	if (random2 == 0)
-		magic = true;
-	if (random == 0)
-		tet.Init(LINE, magic);
-	else if (random == 1)
-		tet.Init(SQUARE, magic);
-	else if (random == 2)
-		tet.Init(LPIECE, magic);
-	else if (random == 3)
-		tet.Init(JPIECE, magic);
-	else if (random == 4)
-		tet.Init(SPIECE, magic);
-	else if (random == 5)
-		tet.Init(ZPIECE, magic);
-	else if (random == 6)
-		tet.Init(TPIECE, magic);
-
-
-	return tet;
-
-
-}
-
-
-void Tetris::Solidify(Tetrimino a_tet) {
+void Tetris::Solidify() {
 	int tempx = 0, tempy = 0;
 	for (int i = 0; i < TETRIMINO_SIZE; ++i) { // for each block in curtet,
 		tempx = curtet.getBlock(i).getPos().x; // save the position of the block, so we don't have to get it again
@@ -322,7 +422,7 @@ void Tetris::Solidify(Tetrimino a_tet) {
 			field[tempx][tempy].setStuff(BLOCK);
 	}
 
-	curtet = a_tet;
+	// tetrimino change used to be here
 	linestosend += checkAllLines();
 }
 
@@ -422,7 +522,9 @@ void Tetris::Rotate(bool clockwise) {
 }
 
 
-
+int Tetris::LinesToSend() {
+	return linestosend;
+}
 
 
 

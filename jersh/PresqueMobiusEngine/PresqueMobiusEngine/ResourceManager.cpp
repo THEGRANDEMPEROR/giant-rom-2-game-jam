@@ -63,6 +63,19 @@ resourceStruct* ResourceManager::getResource(LPCSTR fileName, resourceType type)
 	return &resVec[resVec.size()-1];
 }
 
+resourceStruct* ResourceManager::getResource(LPCSTR name, D3DXCOLOR mask) {
+	resourceStruct tempRes;
+	imageAsset tempImage;
+	tempRes.name = name;
+	tempRes.resType = image;
+	Engine::instance()->getvFrame()->loadImage(name,mask,&tempImage);
+	imageList.push_back(tempImage);
+
+	tempRes.resource = &imageList.back();
+	resVec.push_back(tempRes);
+	return &resVec[resVec.size()-1];
+}
+
 resourceStruct* ResourceManager::createCube(LPCSTR name, float top, float bottom, float front, float back, float left, float right) {
 	cubeAsset tempCube;
 	resourceStruct tempRes;
@@ -88,7 +101,7 @@ void ResourceManager::reload() {
 		case image:
 			tempImage = (imageAsset*)resVec[i].resource;
 			tempImage->objTex->Release();
-			Engine::instance()->getvFrame()->loadImage(resVec[i].name.c_str(),tempImage);
+			Engine::instance()->getvFrame()->loadImage(resVec[i].name.c_str(),tempImage->mask,tempImage);
 			break;
 		case cube:
 			tempCube = (cubeAsset*)resVec[i].resource;
@@ -274,4 +287,45 @@ void ResourceManager::release() {
 		musicList.pop_back();
 	}
 	resVec.clear();
+}
+
+void ResourceManager::release(LPCSTR assetName) {
+	int temp;
+	for(int i = 0; i < resVec.size(); ++i) {
+		if(resVec[i].name == assetName) {
+			switch(resVec[i].resType) {
+			case image:
+				((imageAsset*)resVec[i].resource)->objTex->Release();
+				imageList.remove(*(imageAsset*)resVec[i].resource);
+				break;
+
+			case cube:
+				((cubeAsset*)resVec[i].resource)->objInd->Release();
+				((cubeAsset*)resVec[i].resource)->objDec->Release();
+				((cubeAsset*)resVec[i].resource)->obj->Release();
+				cubeList.remove(*(cubeAsset*)resVec[i].resource);
+				break;
+
+			case xModel:
+				((modelAsset*)resVec[i].resource)->adj->Release();
+				((modelAsset*)resVec[i].resource)->matPoint->Release();
+				((modelAsset*)resVec[i].resource)->mesh->Release();
+				delete [] ((modelAsset*)resVec[i].resource)->textures;
+				modelList.remove(*(modelAsset*)resVec[i].resource);
+				break;
+
+			case audio:
+				((soundStruct*)resVec[i].resource)->asset->release();
+				soundList.remove(*(soundStruct*)resVec[i].resource);
+				break;
+
+			case stream:
+				((musicStruct*)resVec[i].resource)->asset->release();
+				musicList.remove(*(musicStruct*)resVec[i].resource);
+				break;
+			}
+			resVec.erase(resVec.begin()+i);
+			return;
+		}
+	}
 }

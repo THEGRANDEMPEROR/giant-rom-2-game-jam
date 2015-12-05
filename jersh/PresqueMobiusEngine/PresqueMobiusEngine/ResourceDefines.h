@@ -103,6 +103,9 @@ struct imageAsset {
 	Texture objTex;
 	TexInfo texInfo;
 	D3DCOLOR mask;
+	inline bool operator==(imageAsset other) {
+		return this->objTex == other.objTex;
+	}
 };
 
 struct cubeAsset {
@@ -116,6 +119,10 @@ struct cubeAsset {
 	float right;
 	float front;
 	float back;
+
+	inline bool operator==(cubeAsset other) {
+		return this->obj == other.obj;
+	}
 };
 
 struct cubeStruct {
@@ -132,6 +139,10 @@ struct modelAsset {
 	IDirect3DVertexDeclaration9* dec;
 	DWORD numMats;
 	imageAsset** textures; 
+
+	inline bool operator==(modelAsset other) {
+		return this->mesh == other.mesh;
+	}
 };
 
 struct spriteStruct {
@@ -147,6 +158,9 @@ struct spriteStruct {
 struct musicStruct {
 	soundAsset asset;
 	soundType type;
+	inline bool operator==(musicStruct other) {
+		return this->asset == other.asset;
+	}
 };
 
 struct soundStruct {
@@ -154,6 +168,9 @@ struct soundStruct {
 	soundType type;
 	float minDist;
 	float maxDist;
+	inline bool operator==(soundStruct other) {
+		return this->asset == other.asset;
+	}
 };
 
 struct Vertex {

@@ -148,6 +148,9 @@ resourceStruct* Engine::getResource(LPCSTR name, resourceType type) {
 	return resMan.getResource(name,type);
 }
 
+resourceStruct* Engine::getResource(LPCSTR name, D3DXCOLOR color) {
+	return resMan.getResource(name,color);
+}
 
 float Engine::getBind(LPCSTR Name) {
 	return inputSys.getBind(Name);
@@ -200,4 +203,8 @@ void Engine::setLight(int num,D3DLIGHT9& light,bool active) {
 
 D3DLIGHT9* Engine::getLight(int num) {
 	return vFrame.getLight(num);
+}
+
+void Engine::setClearColor(D3DXCOLOR color) {
+	vFrame.setClearColor(color);
 }
