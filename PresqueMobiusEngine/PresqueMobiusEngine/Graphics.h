@@ -37,6 +37,8 @@ private:
 
 	D3DLIGHT9 _lights[MAX_LIGHTS];
 
+	D3DXCOLOR clearColor;
+
 	//
 	int _width;
 	int _height;
@@ -59,6 +61,7 @@ public:
 	bool restart(HWND hWnd,HINSTANCE hInst);
 	void shutdown();
 	void setLight(int num,D3DLIGHT9& light,bool active);
+	void setClearColor(D3DXCOLOR color);
 	D3DLIGHT9* getLight(int num);
 	void render();
 	void addRender(renInfo& info);
@@ -69,6 +72,7 @@ public:
 	void setTextSize(int height, int width);
 	void loadImage(LPCSTR FileName,UINT Width,UINT Height,UINT MipLevels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,DWORD Filter,DWORD MipFilter,D3DCOLOR ColorKey,D3DXIMAGE_INFO *SrcInfo,PALETTEENTRY *pPalette,LPDIRECT3DTEXTURE9 *Tex);
 	void loadImage(LPCSTR FileName,imageAsset* asset);
+	void loadImage(LPCSTR FileName,D3DXCOLOR mask,imageAsset* asset);
 	void loadXModel(LPCSTR FileName, modelAsset* asset);
 	void createCube(LPCSTR FileName, cubeAsset* asset);
 	void createCube(cubeAsset* asset, float top, float bottom, float front, float back, float left, float right);

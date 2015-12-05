@@ -42,6 +42,7 @@ private:
 	void startTetris();
 
 	//char select
+	float startDelay;
 	bool p1Lock;
 	bool p2Lock;
 	int p1Select;

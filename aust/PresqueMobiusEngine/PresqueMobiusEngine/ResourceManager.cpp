@@ -63,6 +63,18 @@ resourceStruct* ResourceManager::getResource(LPCSTR fileName, resourceType type)
 	return &resVec[resVec.size()-1];
 }
 
+resourceStruct* ResourceManager::getResource(LPCSTR name, D3DXCOLOR mask) {
+	resourceStruct tempRes;
+	imageAsset tempImage;
+	tempRes.name = name;
+	tempRes.resType = image;
+	Engine::instance()->getvFrame()->loadImage(name,mask,&tempImage);
+	imageList.push_back(tempImage);
+	tempRes.resource = &imageList.back();
+
+	return &resVec[resVec.size()-1];
+}
+
 resourceStruct* ResourceManager::createCube(LPCSTR name, float top, float bottom, float front, float back, float left, float right) {
 	cubeAsset tempCube;
 	resourceStruct tempRes;
@@ -88,7 +100,7 @@ void ResourceManager::reload() {
 		case image:
 			tempImage = (imageAsset*)resVec[i].resource;
 			tempImage->objTex->Release();
-			Engine::instance()->getvFrame()->loadImage(resVec[i].name.c_str(),tempImage);
+			Engine::instance()->getvFrame()->loadImage(resVec[i].name.c_str(),tempImage->mask,tempImage);
 			break;
 		case cube:
 			tempCube = (cubeAsset*)resVec[i].resource;

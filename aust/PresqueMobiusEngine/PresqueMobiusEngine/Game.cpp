@@ -181,6 +181,14 @@ Game::~Game() {
 }
 
 void Game::init() {
+	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",image)->resource;
+	backGround.color = 0xFFFFFFFF;
+	backGround.rec.left = 0;
+	backGround.rec.top = 0;
+	backGround.rec.right = backGround.image->texInfo.Width;
+	backGround.rec.bottom = backGround.image->texInfo.Height;
+	backGround.center = D3DXVECTOR3(backGround.rec.right/2.0f,backGround.rec.bottom/2.0f,0);
+
 	CharacterInfo tempChar;
 	tempChar.icon.rec.top = 0;
 	tempChar.icon.rec.left = 0;
@@ -242,6 +250,11 @@ bool Game::update() {
 		if(curState != cselect) {
 			menu.update();
 			menu.render();
+			tempInfo.type = screenSprite;
+			tempInfo.asset = &backGround;
+			D3DXMatrixIdentity(&tempInfo.matrix);
+			D3DXMatrixTranslation(&tempInfo.matrix,1280/2,720/4,0);
+			Engine::instance()->addRender(tempInfo);
 
 			if(Engine::instance()->getMessage("CharSelect")) {
 				menu.resetSelection();
@@ -249,6 +262,7 @@ bool Game::update() {
 				p2Lock = false;
 				p1Select = 0;
 				p2Select = 0;
+				startDelay = 3.0f;
 				curState = cselect;
 			}
 			if(Engine::instance()->getMessage("MainMenu")) {
@@ -357,8 +371,11 @@ bool Game::update() {
 				Engine::instance()->addRender(tempInfo);
 			}
 			if(p1Lock&&p2Lock) {
-				//start game
-				startTetris();
+				startDelay -= Engine::instance()->dt();
+				if(startDelay <= 0) {
+					//start game
+					startTetris();
+				}
 			}
 
 		}
