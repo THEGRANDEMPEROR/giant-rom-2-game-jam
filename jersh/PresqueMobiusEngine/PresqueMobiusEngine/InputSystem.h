@@ -290,6 +290,13 @@ enum inputList {
 	RIGHT
 };
 
+namespace buttonFlags {
+static char _pushed = 0x01;
+static char _held = 0x02;
+static char _released = 0x04;
+static char _repeat = 0x08;
+}
+
 struct axis {
 	std::string name;
 	inputList positive;
@@ -298,11 +305,14 @@ struct axis {
 
 struct button {
 	std::string name;
+	float _tRepeat;
+	char flags;
 	inputList buttons[3];
 };
 
 class InputSystem {
 private:
+	float repeatTime;
 	//direct input interface
 	IDirectInput8* m_pDIObj;
 	IDirectInputDevice8* m_pDIKeyboard;
@@ -318,10 +328,12 @@ private:
 public:
 	InputSystem();
 	~InputSystem();
+	void setRepeat(float repeat) { repeatTime = repeat;}
 	void shutdown();
 	void init(HWND& hWnd,HINSTANCE& hInst);
 	void restart(HWND& hWnd,HINSTANCE& hInst);
 	float getBind(LPCSTR Name);
+	char getFlag(LPCSTR Name);
 	//create button bind
 	void bind(inputList input, LPCSTR name);
 	//create axis bind

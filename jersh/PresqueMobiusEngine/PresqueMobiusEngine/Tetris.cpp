@@ -112,19 +112,19 @@ void Tetris::Update() {
 
 
 
-	if (Engine::instance()->getBind("Player 1 Down DPAD")) {
+	if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_pushed) {
 		TryToMove(0, 1);
 	}
-	if (Engine::instance()->getBind("Player 1 Right DPAD")) {
+	if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_held) {
 		TryToMove(1, 0);
 	}
-	if (Engine::instance()->getBind("Player 1 Left DPAD")) {
+	if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_held) {
 		TryToMove(-1, 0);
 	}
-	if (Engine::instance()->getBind("Player 1 A")) {
+	if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_held) {
 		Rotate(true);
 	}
-	if (Engine::instance()->getBind("Player 1 B")) {
+	if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_held) {
 		Rotate(false);
 	}
 	TryToMove(0, Engine::instance()->dt());
@@ -391,8 +391,10 @@ void Tetris::Rotate(bool clockwise) {
 		if (i != CENTER_TETRIMINO_BLOCK) { // except the center block, which should stay still,
 			xChange = temppos[CENTER_TETRIMINO_BLOCK].x - temppos[i].x;
 			yChange = temppos[CENTER_TETRIMINO_BLOCK].y - temppos[i].y;
-
-			curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x + yChange, temppos[CENTER_TETRIMINO_BLOCK].y + xChange));
+			if (clockwise)
+				curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x - yChange, temppos[CENTER_TETRIMINO_BLOCK].y - xChange));
+			else
+				curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x + yChange, temppos[CENTER_TETRIMINO_BLOCK].y + xChange));
 		}
 	}
 

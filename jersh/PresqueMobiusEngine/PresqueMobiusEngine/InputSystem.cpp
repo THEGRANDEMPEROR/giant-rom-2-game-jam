@@ -1,8 +1,10 @@
 #include "InputSystem.h"
+#include "Engine.h"
 
 InputSystem::InputSystem() {
 	_triggerThreshold = 128;
 	_stickThreshold = 32767 / 2;
+	repeatTime = 0.1f;
 }
 
 InputSystem::~InputSystem() {
@@ -32,6 +34,8 @@ void InputSystem::shutdown() {
 void InputSystem::bind(inputList input, LPCSTR name) {
 	button temp;
 	temp.name = name;
+	temp._tRepeat = 0;
+	temp.flags = 0x00;
 	temp.buttons[0] = NO_INPUT;
 	temp.buttons[1] = NO_INPUT;
 	temp.buttons[2] = NO_INPUT;
@@ -137,6 +141,40 @@ void InputSystem::update() {
 	for(int i = 0; i < 4; ++i) {
 		XInputGetState(i,&_pads[i]);
 	}
+	//update button flags
+	char tempFlag;
+	for(int i = 0; i < boundButton.size(); ++i) {
+		tempFlag = 0x00;
+		if(getBind(boundButton[i].name.c_str())) {
+			if(boundButton[i].flags & buttonFlags::_pushed) {
+				tempFlag = buttonFlags::_pushed;
+				boundButton[i]._tRepeat -= Engine::instance()->dt();
+				if(boundButton[i]._tRepeat <= 0) {
+					tempFlag = tempFlag | buttonFlags::_repeat;
+					boundButton[i]._tRepeat = repeatTime;
+				}
+			} else {
+				tempFlag = buttonFlags::_pushed;
+				tempFlag = tempFlag | buttonFlags::_held;
+				tempFlag = tempFlag | buttonFlags::_repeat;
+				boundButton[i]._tRepeat = repeatTime;
+			}
+		} else {
+			if(boundButton[i].flags & buttonFlags::_pushed) {
+				tempFlag = buttonFlags::_released;
+			}
+		}
+		boundButton[i].flags = tempFlag;
+	}
+}
+
+char InputSystem::getFlag(LPCSTR Name) {
+	for(int i = 0; i < boundButton.size(); ++i) {
+		if(boundButton[i].name == Name) {
+			return boundButton[i].flags;
+		}
+	}
+	return 0x00;
 }
 
 void InputSystem::restart(HWND& hWnd, HINSTANCE& hInst) {

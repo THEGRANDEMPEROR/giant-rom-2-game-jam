@@ -1,7 +1,7 @@
 /*===================================================
 =Engine.h/.cpp										=
 =by Tyler van Gastel								=
-=latest update 11/23/2015							=
+=latest update 12/1/2015							=
 =Holds graphics, sound, input and resources manager	=
 =====================================================*/
 
@@ -10,6 +10,7 @@
 #include "ResourceManager.h"
 #include "Sound.h"
 #include "InputSystem.h"
+#include "MessageSystem.h"
 #include <ctime>
 
 class Engine {
@@ -27,6 +28,7 @@ private:
 	ResourceManager resMan;
 	Sound sFrame;
 	InputSystem inputSys;
+	MessageSystem mesSys;
 	static Engine* _engine;
 	Engine();
 	~Engine();
@@ -61,6 +63,8 @@ public:
 	*/
 	bool getButton(inputList input);
 	bool getButton(LPCSTR Name);
+	char getFlags(LPCSTR Name);
+	void setRepeat(float repeat) { inputSys.setRepeat(repeat);}
 
 	resourceStruct* getResource(LPCSTR name, resourceType type);
 	//
@@ -77,5 +81,8 @@ public:
 	Graphics* getvFrame() {return &vFrame;}
 	Sound* getsFrame() {return &sFrame;}
 	InputSystem* getInputSys() {return &inputSys;}
+	void clearMessages() {mesSys.clear();}
+	bool getMessage(std::string message){return mesSys.getMessage(message);}
+	void postMessage(std::string message){mesSys.post(message);}
 };
 

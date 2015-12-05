@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine.h"
-#include "Tetris.h"
+#include "TetrisGame.h"
 
 #define WINDOW_TITLE "WEEEEEE"
 
@@ -9,7 +9,7 @@ private:
 	camera cam;
 
 
-	Tetris tetristest;
+	TetrisGame tetris;
 
 
 

@@ -32,7 +32,7 @@ void Game::init() {
 
 
 
-	tetristest.Init();
+	tetris.Init();
 
 
 }
@@ -43,8 +43,8 @@ void Game::shutdown() {
 
 bool Game::update() {
 
-	tetristest.Update();
-	tetristest.Draw();
+	tetris.Update();
+	tetris.Draw();
 
 
 	Engine::instance()->render();
