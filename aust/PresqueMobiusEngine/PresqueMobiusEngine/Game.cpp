@@ -33,6 +33,12 @@ void tmagic() {
 	Engine::instance()->postMessage("ToggleMagic");
 }
 
+//void bindcontrollers() {
+//	Engine::instance()->postMessage("BindControllers");
+//}
+
+
+
 
 void Game::createMenu() {
 	menu.clear();
@@ -76,6 +82,11 @@ void Game::createOptions() {
 	sprintf(buffer,"Toggle Magic: %s",_magic ? "true" : "false");
 	menu.addButton(tmagic,buffer,temp,DT_LEFT,0xFFFFFFFF,0xFFFF0000);
 
+	//temp.top = 0.7f;
+	//temp.bottom = 0.8f;
+	//sprintf(buffer, "Bind Controllers");
+	//menu.addButton(bindcontrollers, buffer, temp, DT_LEFT, 0xFFFFFFFF, 0xFFFF0000);
+
 	temp.top = 0.8f;
 	temp.bottom = 0.9f;
 	menu.addButton(mMenu,"Back",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
@@ -115,6 +126,7 @@ void Game::createFinish() {
 }
 
 Game::Game() {
+	srand(time(NULL));
 	_rensa = false;
 	_magic = true;
 
@@ -148,6 +160,8 @@ Game::Game() {
 		//game pad menu bind
 		Engine::instance()->bind(pad1_LYp,"SelectionUp");
 		Engine::instance()->bind(pad1_LYn,"SelectionDown");
+		Engine::instance()->bind(pad1_UP, "SelectionUpDpad");
+		Engine::instance()->bind(pad1_DOWN, "SelectionDownDpad");
 		Engine::instance()->bind(pad1_A,"Accept");
 		//keyboard
 		Engine::instance()->bind(W,"SelectionUp");
@@ -156,7 +170,15 @@ Game::Game() {
 		//p2 character select
 		Engine::instance()->bind(pad2_LYp,"SelectionUp2");
 		Engine::instance()->bind(pad2_LYn,"SelectionDown2");
+		Engine::instance()->bind(pad2_UP, "SelectionUp2Dpad");
+		Engine::instance()->bind(pad2_DOWN, "SelectionDown2Dpad");
 		Engine::instance()->bind(pad2_A,"Accept2");
+
+		// player 1 gamepad 1
+		tetris.BindPlayer(0, 1); // first player. gamepads are 1-4 so first gamepad.
+		// player 2 gamepad 2
+		tetris.BindPlayer(1, 2); // second player. gamepads are 1-4 so second gamepad.
+
 	} else {
 		//one controller
 		//keyboard
@@ -166,7 +188,14 @@ Game::Game() {
 		//p2 character select
 		Engine::instance()->bind(pad1_LYp,"SelectionUp2");
 		Engine::instance()->bind(pad1_LYn,"SelectionDown2");
+		Engine::instance()->bind(pad1_UP, "SelectionUp2Dpad");
+		Engine::instance()->bind(pad1_DOWN, "SelectionDown2Dpad");
 		Engine::instance()->bind(pad1_A,"Accept2");
+
+		// player 1 keyboard
+		tetris.BindPlayer(0, 0); // first player. keyboard is 0.
+		// player 2 gamepad 2
+		tetris.BindPlayer(1, 1); // second player. gamepads are 1-4 so first gamepad.
 	}
 
 	p1Name.flags = DT_CENTER;
@@ -231,6 +260,8 @@ void Game::init() {
 
 	charList.push_back(tempChar);
 	Engine::instance()->setRepeat(0.2f);
+
+	tetris.Init();
 }
 
 void Game::shutdown() {
@@ -238,10 +269,9 @@ void Game::shutdown() {
 }
 
 void Game::startTetris() {
-	curState = mmenu;
-	menu.resetSelection();
-	createMenu();
-	Engine::instance()->setRepeat(0.1f);
+	curState = gplay;
+	tetris.Reset(_magic, _rensa);
+	//Engine::instance()->setRepeat(0.1f); // maybe change this
 }
 
 bool Game::update() {
@@ -288,12 +318,16 @@ bool Game::update() {
 				_magic = !_magic;
 				createOptions();
 			}
+			//if (Engine::instance()->getMessage("BindControllers")) {
+			//	thought about it, and this is actually not necessary since it's only two controllers that are loaded kinda. fuckit man. fuckit.
+			//}
 		} else {
 			//character select menu
 			if(!p1Lock) {
-				if(Engine::instance()->getFlags("SelectionUp")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("SelectionUp")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionUpDpad")&buttonFlags::_repeat) {
 					--p1Select;
-				} else if(Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat) {
+				}
+				else if (Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDownDpad")&buttonFlags::_repeat) {
 					++p1Select;
 				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_repeat) {
 					p1Lock = true;
@@ -307,9 +341,10 @@ bool Game::update() {
 			}
 
 			if(!p2Lock) {
-				if(Engine::instance()->getFlags("SelectionUp2")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("SelectionUp2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionUp2Dpad")&buttonFlags::_repeat) {
 					--p2Select;
-				} else if(Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat) {
+				}
+				else if (Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDown2Dpad")&buttonFlags::_repeat) {
 					++p2Select;
 				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_repeat) {
 					p2Lock = true;
@@ -379,6 +414,15 @@ bool Game::update() {
 			}
 
 		}
+	}
+	else { // GPLAY!
+		tetris.Update();
+
+		tetris.Draw(); // SAD AUST IT CRASHES BECAUSE OF THIS I'M GOING TO BED WTF IS WRONG AAAAAAAAAAAAHHHHHHHHHHHHHHHHHHH
+						// CTRL+F FOR: dammitrender
+						// to get to my other comments showing where things are.
+						// never mind these comments
+
 	}
 
 	if(showFPS) {

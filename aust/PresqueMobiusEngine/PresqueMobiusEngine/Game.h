@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Button.h"
 #include "MenuSystem.h"
+#include "TetrisGame.h"
 
 #define WINDOW_TITLE "Battle Tetris Solid 5: The Phantom Kojima"
 
@@ -54,6 +55,11 @@ private:
 	//game setting
 	bool _rensa;
 	bool _magic;
+
+	//tetris things
+	TetrisGame tetris;
+	int p1cont;
+	int p2cont;
 
 	double fps;
 	char buffer[256];

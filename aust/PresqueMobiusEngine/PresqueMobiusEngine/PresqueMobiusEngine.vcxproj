@@ -87,6 +87,9 @@
     <ClInclude Include="ResourceDefines.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Tetrimino.h" />
+    <ClInclude Include="Tetris.h" />
+    <ClInclude Include="TetrisGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
@@ -99,6 +102,9 @@
     <ClCompile Include="RenVector.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Tetrimino.cpp" />
+    <ClCompile Include="Tetris.cpp" />
+    <ClCompile Include="TetrisGame.cpp" />
     <ClCompile Include="winMain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
