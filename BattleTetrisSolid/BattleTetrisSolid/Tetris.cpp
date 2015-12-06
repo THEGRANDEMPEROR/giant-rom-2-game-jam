@@ -718,5 +718,28 @@ bool Tetris::Living() {
 	return alive;
 }
 
+void Tetris::clearBottom(int linesToClear) {
+	for(int i = 0; i < linesToClear;++i) {
+		removeLine(FIELD_SIZE_Y-1);
+	}
+}
 
+bool Tetris::isEmpty(int line) {
+	for(int i = 0; i < FIELD_SIZE_X; ++i) {
+		if(field[i][line].getStuff() != EMPTY ) {
+			return false;
+		}
+	}
+	return true;
+}
 
+void Tetris::clearTop(int linesToClear) {
+	int lines;
+	lines = linesToClear;
+	for(int i = 0; i < FIELD_SIZE_Y&&lines > 0;++i) {
+		if(!isEmpty(i)) {
+			removeLine(i);
+			--lines;
+		}
+	}
+}

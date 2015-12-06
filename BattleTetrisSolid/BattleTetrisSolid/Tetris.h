@@ -106,6 +106,9 @@ public:
 	int LinesToSend();
 	TetriminoType curType();
 	bool curTetMagic();
+	void clearBottom(int linesToClear);
+	void clearTop(int linesToClear);
+	bool isEmpty(int line);
 
 	void setLinesToSend(int a_lines);
 
