@@ -27,12 +27,13 @@ void Player::Init(int a_player) {
 	magicBlocked = 0;
 	magicRunning = 0;
 	maxMagic = 20;
+	
 }
 
 
 void Player::Update(int a_speed) {
 	// draw character?
-	tetris.Update(controller, a_speed);
+	tetris.Update(a_speed);
 	magic += tetris.getMagic();
 	if(magic > maxMagic) {
 		magic = maxMagic;
@@ -105,7 +106,7 @@ void Player::Reset() {
 	immune = 0;
 	magicBlocked = 0;
 	magicRunning = 0;
-	tetris.Reset();
+	tetris.Reset(controller);
 }
 
 bool Player::needPiece() {

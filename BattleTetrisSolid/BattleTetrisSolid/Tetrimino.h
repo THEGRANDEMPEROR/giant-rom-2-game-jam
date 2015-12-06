@@ -73,6 +73,7 @@ public:
 	void Snap(bool a_snap); // snaps to grid. true = positive AKA down. false = negative AKA up
 	void SetBlockPos(int a_index, fallingpos a_pos);
 	Tetrimino& operator=(Tetrimino& a_tet);
+	bool getMagic();
 };
 
 

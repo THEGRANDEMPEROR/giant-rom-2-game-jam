@@ -13,6 +13,8 @@ const int DEATHZONE = 2; // top two rows equals death if you solidify there.
 
 const float speedmultiplier = 0.3f;
 const float timetogofastsideways = 0.25f; // The time it takes for it to quickly move sideways while holding either direction
+const float timetoslide = 0.5f;
+const float timetoslideholdingdown = 0.1f;
 
 const int xOffsetP1 = 128;
 const int yOffsetP1 = 32;
@@ -57,7 +59,9 @@ private:
 	int linestosend;
 	int numlines;
 	int speed;
+	int controller;
 	float timeheld;
+	float timesliding;
 	bool iNeedATetrimino;
 	bool needgarbage;
 	bool alive;
@@ -88,9 +92,9 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update(int a_controller, int a_speed);
+	void Update(int a_speed);
 	void Draw(int a_player);
-	void Reset();
+	void Reset(int a_controller);
 	void setPiece(Tetrimino& piece);
 	void transformMagic();
 

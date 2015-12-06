@@ -180,3 +180,10 @@ Tetrimino& Tetrimino::operator=(Tetrimino& a_tet) {
 	return *this;
 }
 
+
+bool Tetrimino::getMagic() {
+	
+	return false;
+}
+
+
