@@ -69,6 +69,7 @@ public:
 	void Move(int a_x, float a_y);
 	void Move(int a_x, int a_y);
 	Block getBlock(int a_index);
+	bool isMagic();
 	TetriminoType getType();
 	void Snap(bool a_snap); // snaps to grid. true = positive AKA down. false = negative AKA up
 	void SetBlockPos(int a_index, fallingpos a_pos);

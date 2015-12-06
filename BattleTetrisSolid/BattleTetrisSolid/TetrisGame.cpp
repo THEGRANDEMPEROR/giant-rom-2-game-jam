@@ -23,8 +23,7 @@ void Player::Init(int a_player) {
 		abilities[i] = noPower;
 	}
 	magic = 0;
-	immune = 0;
-	magicBlocked = 0;
+	effectLength = 0;
 	magicRunning = 0;
 	maxMagic = 20;
 	
@@ -33,24 +32,16 @@ void Player::Init(int a_player) {
 
 void Player::Update(int a_speed) {
 	// draw character?
+<<<<<<< HEAD
 	tetris.Update(a_speed);
+=======
+	tetris.Update(controller, a_speed, curEffect);
+>>>>>>> origin/master
 	magic += tetris.getMagic();
 	if(magic > maxMagic) {
 		magic = maxMagic;
 	}
 	tetris.clearMagic();
-	if(immune > 0) {
-		immune -= Engine::instance()->dt();
-		if(immune < 0) {
-			immune = 0;
-		}
-	}
-	if(magicBlocked > 0) {
-		magicBlocked -= Engine::instance()->dt();
-		if(magicBlocked < 0) {
-			magicBlocked = 0;
-		}
-	}
 	if(magicRunning > 0) {
 		magicRunning -= Engine::instance()->dt();
 		if(magicRunning < 0) {
@@ -102,9 +93,9 @@ void Player::BindCont(int a_controller) { // 0 keyboard. 1-4 gamepads.
 
 
 void Player::Reset() {
+	curEffect = noEffect;
+	effectLength = 0;
 	magic = 0;
-	immune = 0;
-	magicBlocked = 0;
 	magicRunning = 0;
 	tetris.Reset(controller);
 }
@@ -115,6 +106,17 @@ bool Player::needPiece() {
 
 void Player::setPiece(Tetrimino& piece) {
 	tetris.setPiece(piece);
+	if(curEffect != noEffect) {
+		--effectLength;
+		if(effectLength <= 0) {
+			effectLength = 0;
+			curEffect = noEffect;
+		}
+	}
+}
+
+TetrisGame* Player::getGame() {
+	return game;
 }
 
 void Player::subMagic(int dec) {
@@ -122,14 +124,6 @@ void Player::subMagic(int dec) {
 	if(magic < 0) {
 		magic = 0;
 	}
-}
-
-void Player::setBlocked(float timeBlocked) {
-	magicBlocked = timeBlocked;
-}
-
-void Player::setImmune(float timeImmune) {
-	immune = timeImmune;
 }
 
 void Player::setUsingMagic(float timeUsingMagic) {
@@ -272,6 +266,9 @@ void TetrisGame::Init() {
 
 	//BindPlayer(0, a_p1cont); 
 	//BindPlayer(1, a_p2cont);
+	for(int i = 0; i < 2; ++i) {
+		players[i].setGame(this);
+	}
 }
 
 
@@ -457,4 +454,13 @@ void TetrisGame::CancelOutLines() {
 
 void TetrisGame::setMagic(int player, int level, void (*func)(Player*,Player*)) {
 	players[player].setMagic(level,func);
+}
+
+void TetrisGame::fillQueue(TetriminoType type,bool hasmagic, int fill) {
+	Tetrimino temp;
+	temp.Init(type,hasmagic);
+	tetqueue.clear();
+	for(int i = 0; i < fill; ++i) {
+		tetqueue.push_back(temp);
+	}
 }

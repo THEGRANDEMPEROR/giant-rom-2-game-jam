@@ -11,26 +11,37 @@ const int MAXSPEED = 9;
 const int MAXWINS = 2;
 //const int Xqueueoffset = 
 
+class TetrisGame;
 
-
-
+enum PlayerEffect {
+	noEffect,
+	noRot,
+	noDrop,
+	ranRot,
+	noMagic,
+	attackImmune,
+};
 
 class Player {
 private:
+	TetrisGame* game;
 	int controller; // 0 keyboard. 1-4 gamepads. 
 	int player;
 	int magic;
 	int maxMagic;
-	float immune;
-	float magicBlocked;
+	int effectLength;
 	float magicRunning;
 	Tetris tetris;
+	PlayerEffect curEffect;
 	// abilities
 	void (*abilities[4])(Player* ,Player*);
 public:
 	Player();
 	~Player();
+	void setEffect(PlayerEffect effect, int length){curEffect = effect;effectLength = length;}
 	void Init(int a_player);
+	void setGame(TetrisGame* a_game){game = a_game;}
+	TetrisGame* getGame();
 	void Update(int a_speed);
 	void Draw();
 	void BindCont(int a_controller); // 0 keyboard. 1-4 gamepads.
@@ -41,13 +52,11 @@ public:
 	int getMagic() {return magic;}
 	void subMagic(int ammount);
 	void setPiece(Tetrimino& piece);
-	bool isImmune(){return immune > 0;}
-	bool isBlocked(){return magicBlocked > 0;}
+	bool isImmune(){return curEffect == attackImmune;}
+	bool isBlocked(){return curEffect == noMagic;}
 	bool isUsingMagic(){return magicRunning > 0;}
-	//immune time is in seconds
-	void setImmune(float immuneTime);
+	//
 	void setUsingMagic(float magicTime);
-	void setBlocked(float blockedTime);
 	Tetris* getTetris(){return &tetris;}
 	
 	int LinesToSend();
@@ -97,6 +106,11 @@ public:
 	void Update();
 	void Draw();
 	void BindPlayer(int a_player, int a_controller); // 0 keyboard. 1-4 gamepads.
+<<<<<<< HEAD
+	void Reset(bool a_magic, bool a_rensa);
+	void fillQueue(TetriminoType fill,bool hasMagic,int number);
+=======
 	void Reset(bool a_magic, bool a_rensa, bool a_winsreset);
+>>>>>>> origin/master
 	void setMagic(int player,int level,void (*func)(Player*,Player*));
 };
