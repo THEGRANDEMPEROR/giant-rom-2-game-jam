@@ -1,5 +1,6 @@
 #pragma once
 #include "Tetris.h"
+#include "TetrisGame.h"
 #include "InputSystem.h"
 #include <math.h>
 
@@ -150,8 +151,15 @@ void Tetris::Init() {
 
 }
 
+TetriminoType Tetris::curType() {
+	return curtet.getType();
+}
 
-void Tetris::Update(int a_controller) {
+bool Tetris::curTetMagic() {
+	return curtet.isMagic();
+}
+
+void Tetris::Update(int a_controller, int a_speed, PlayerEffect curEffect) {
 	//int random = 0;
 	//int random1 = 0;
 	//if (Engine::instance()->getBind("Player 1 A")) {
@@ -159,11 +167,11 @@ void Tetris::Update(int a_controller) {
 	//	random1 = rand() % FIELD_SIZE_Y;
 	//	field[random][random1].setStuff(BLOCK);
 	//}
-
+	float tempYChange = 0.0f;
 	if (a_controller == 0) { // gamepad 1
 		Engine::instance()->setRepeat(0.05f);
-		if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_repeat) {
-			TryToMove(0, 1);
+		if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
+			tempYChange += 1.0f;
 		}
 		if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_pushed) {
 			TryToMove(1, 0);
@@ -191,18 +199,18 @@ void Tetris::Update(int a_controller) {
 		}
 		else if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(true);
 		}
-		if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(false);
 		}
 		TryToMove(0, Engine::instance()->dt());
 	}
 	else if (a_controller == 1) { // gamepad 2
 		Engine::instance()->setRepeat(0.05f);
-		if (Engine::instance()->getFlags("Player 2 Down DPAD")&buttonFlags::_repeat) {
-			TryToMove(0, 1);
+		if (Engine::instance()->getFlags("Player 2 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
+			tempYChange += 1.0f;
 		}
 		if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_pushed) {
 			TryToMove(1, 0);
@@ -230,14 +238,21 @@ void Tetris::Update(int a_controller) {
 		}
 		else if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 2 A")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Player 2 A")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(true);
 		}
-		if (Engine::instance()->getFlags("Player 2 B")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Player 2 B")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(false);
 		}
-		TryToMove(0, Engine::instance()->dt());
 	}
+	//random rotation
+	if(curEffect == ranRot) {
+		if(rand()%10 == 0) {
+			Rotate(rand()%2);
+		}
+	}
+	tempYChange += (1.0f + (a_speed * speedmultiplier))*Engine::instance()->dt();
+	TryToMove(0, tempYChange);
 }
 
 
@@ -380,7 +395,7 @@ bool Tetris::DoICollide(int a_x, float a_y) {
 			return true;
 		}
 		for (int y = 0; y < FIELD_SIZE_Y; ++y) {	// for each y,
-			if (temppos.y - y < 1.0f && temppos.y - y > -1.0f) {				// if that y is within 1.0f of the current position,
+			if (temppos.y - y < 1.0f && temppos.y - y > -1.0f || curtet.getBlock(i).getPos().y - y < 1.0f && curtet.getBlock(i).getPos().y - y > -1.0f) {				// if that y is within 1.0f of the current position,
 				if (field[temppos.x][y].getStuff() != EMPTY) // then check collision with that space
 					return true;
 			}
@@ -412,11 +427,12 @@ void Tetris::TryToMove(int a_x, float a_y) {
 
 		}
 		else {	// if you do collide, snap to grid.
-			if (a_y > 0.0f)
+			if (a_y > 0.0f) {
 				curtet.Snap(true);
-			else
-				curtet.Snap(false);
-
+				while(!DoICollide(0,1.0f)) {
+					curtet.Move(0,1.0f);
+				}
+			}
 			Solidify();
 		}
 	}

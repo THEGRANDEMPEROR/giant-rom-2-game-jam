@@ -23,33 +23,20 @@ void Player::Init(int a_player) {
 		abilities[i] = noPower;
 	}
 	magic = 0;
-	immune = 0;
-	magicBlocked = 0;
+	effectLength = 0;
 	magicRunning = 0;
 	maxMagic = 20;
 }
 
 
-void Player::Update() {
+void Player::Update(int a_speed) {
 	// draw character?
-	tetris.Update(controller);
+	tetris.Update(controller, a_speed, curEffect);
 	magic += tetris.getMagic();
 	if(magic > maxMagic) {
 		magic = maxMagic;
 	}
 	tetris.clearMagic();
-	if(immune > 0) {
-		immune -= Engine::instance()->dt();
-		if(immune < 0) {
-			immune = 0;
-		}
-	}
-	if(magicBlocked > 0) {
-		magicBlocked -= Engine::instance()->dt();
-		if(magicBlocked < 0) {
-			magicBlocked = 0;
-		}
-	}
 	if(magicRunning > 0) {
 		magicRunning -= Engine::instance()->dt();
 		if(magicRunning < 0) {
@@ -101,9 +88,9 @@ void Player::BindCont(int a_controller) { // 0 keyboard. 1-4 gamepads.
 
 
 void Player::Reset() {
+	curEffect = noEffect;
+	effectLength = 0;
 	magic = 0;
-	immune = 0;
-	magicBlocked = 0;
 	magicRunning = 0;
 	tetris.Reset();
 }
@@ -114,6 +101,17 @@ bool Player::needPiece() {
 
 void Player::setPiece(Tetrimino& piece) {
 	tetris.setPiece(piece);
+	if(curEffect != noEffect) {
+		--effectLength;
+		if(effectLength <= 0) {
+			effectLength = 0;
+			curEffect = noEffect;
+		}
+	}
+}
+
+TetrisGame* Player::getGame() {
+	return game;
 }
 
 void Player::subMagic(int dec) {
@@ -121,14 +119,6 @@ void Player::subMagic(int dec) {
 	if(magic < 0) {
 		magic = 0;
 	}
-}
-
-void Player::setBlocked(float timeBlocked) {
-	magicBlocked = timeBlocked;
-}
-
-void Player::setImmune(float timeImmune) {
-	immune = timeImmune;
 }
 
 void Player::setUsingMagic(float timeUsingMagic) {
@@ -150,6 +140,8 @@ void TetrisGame::Init() {
 		players[i].Init(i);
 	}
 	running = true;
+	speed = 0;
+	speedtime = 0.0f;
 	//moved binds to game.cpp
 
 	rensa = false; // default off
@@ -239,13 +231,16 @@ void TetrisGame::Init() {
 
 	//BindPlayer(0, a_p1cont); 
 	//BindPlayer(1, a_p2cont);
+	for(int i = 0; i < 2; ++i) {
+		players[i].setGame(this);
+	}
 }
 
 
 void TetrisGame::Update() {
 	if (running) {
 		for (int i = 0; i < NUMPLAYERS; ++i) {
-			players[i].Update();
+			players[i].Update(speed);
 			//use magic
 			players[i].useMagic(&players[i==0]);
 			if(players[i].needPiece()) {
@@ -253,6 +248,13 @@ void TetrisGame::Update() {
 				tetqueue.erase(tetqueue.begin());
 				tetqueue.push_back(randomTet());
 			}
+		}
+		speedtime += Engine::instance()->dt();
+		if(speedtime >= TIMETOSPEEDUP) {
+			if(speed < MAXSPEED) {
+				++speed;
+			}
+			speedtime = 0;
 		}
 	}
 }
@@ -293,6 +295,8 @@ void TetrisGame::Reset(bool a_magic, bool a_rensa) {
 	}
 	magic = a_magic;
 	rensa = a_rensa;
+	speed = 0;
+	speedtime = 0.0f;
 }
 
 
@@ -300,27 +304,27 @@ Tetrimino TetrisGame::randomTet() { // TETQUEUENO returns a random tetrimino
 	int random = rand() % NUM_TETRIMINO_TYPES; // chance to be each type
 	Tetrimino tet;
 
+	bool a_magic = false;
 	if (magic) { // magic in the options, son!
 		int random2 = rand() % MAGICCHANCE; // chance to be magic
-		bool magic = false;
 
 		if (random2 == 0)
-			magic = true;
+			a_magic = true;
 	}
 	if (random == 0)
-		tet.Init(LINE, magic);
+		tet.Init(LINE, a_magic);
 	else if (random == 1)
-		tet.Init(SQUARE, magic);
+		tet.Init(SQUARE, a_magic);
 	else if (random == 2)
-		tet.Init(LPIECE, magic);
+		tet.Init(LPIECE, a_magic);
 	else if (random == 3)
-		tet.Init(JPIECE, magic);
+		tet.Init(JPIECE, a_magic);
 	else if (random == 4)
-		tet.Init(SPIECE, magic);
+		tet.Init(SPIECE, a_magic);
 	else if (random == 5)
-		tet.Init(ZPIECE, magic);
+		tet.Init(ZPIECE, a_magic);
 	else if (random == 6)
-		tet.Init(TPIECE, magic);
+		tet.Init(TPIECE, a_magic);
 
 
 	return tet;
@@ -355,4 +359,13 @@ void TetrisGame::DrawQueue() {
 
 void TetrisGame::setMagic(int player, int level, void (*func)(Player*,Player*)) {
 	players[player].setMagic(level,func);
+}
+
+void TetrisGame::fillQueue(TetriminoType type,bool hasmagic, int fill) {
+	Tetrimino temp;
+	temp.Init(type,hasmagic);
+	tetqueue.clear();
+	for(int i = 0; i < fill; ++i) {
+		tetqueue.push_back(temp);
+	}
 }

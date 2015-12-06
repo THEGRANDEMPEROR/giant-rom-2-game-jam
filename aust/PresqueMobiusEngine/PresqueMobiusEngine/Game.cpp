@@ -147,6 +147,84 @@ Game::Game() {
 
 	createMenu();
 
+	p1Name.flags = DT_CENTER;
+	p1Name.color = 0xFFFF0000;
+
+	p2Name.flags = DT_CENTER;
+	p2Name.color = 0xFF0000FF;
+}
+
+Game::~Game() {
+	shutdown();
+}
+
+void Game::init() {
+	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",D3DXCOLOR(255,0,0,0))->resource;
+	backGround.color = 0xFFFFFFFF;
+	backGround.rec.left = 0;
+	backGround.rec.top = 0;
+	backGround.rec.right = backGround.image->texInfo.Width;
+	backGround.rec.bottom = backGround.image->texInfo.Height;
+	backGround.center = D3DXVECTOR3(backGround.rec.right/2.0f,backGround.rec.bottom/2.0f,0);
+
+	CharacterInfo tempChar;
+	tempChar.icon.rec.top = 0;
+	tempChar.icon.rec.left = 0;
+	tempChar.icon.color = 0xFFFFFFFF;
+
+	//Drew Scanlon
+	tempChar.name = "Drew Scanlon";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = noPower;
+	}
+	tempChar.abilities[0] = grenade;
+	tempChar.abilities[1] = goodPosture;
+	tempChar.abilities[2] = scalonSpecial;
+	tempChar.abilities[3] = tricaster;
+
+	charList.push_back(tempChar);
+
+	//Dan Ryckert
+	tempChar.name = "Dan Ryckert";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DanRyckert.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = noPower;
+	}
+	tempChar.abilities[0] = powBlock;
+	tempChar.abilities[1] = dmx;
+	tempChar.abilities[2] = marioParty;
+	tempChar.abilities[3] = yellowRussian;
+
+	charList.push_back(tempChar);
+
+	tempChar.name = "Hideo Kojima";
+	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("HideoMB2.jpg",image)->resource;
+	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
+	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
+	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+
+	for(int i = 0; i < 4; ++i) {
+		tempChar.abilities[i] = noPower;
+	}
+	tempChar.abilities[0] = fulton;
+	tempChar.abilities[1] = cardboardBox;
+	tempChar.abilities[2] = tookSoLong;
+	tempChar.abilities[3] = gop;
+
+	charList.push_back(tempChar);
+	Engine::instance()->setRepeat(0.2f);
+
+	tetris.Init();
+
 	int numControllers = 0;
 	XINPUT_STATE tempState;
 	for(int i = 0; i < 2; ++i) {
@@ -242,74 +320,6 @@ Game::Game() {
 		Engine::instance()->bind(pad1_START, "Player 2 Start");
 		Engine::instance()->bind(pad1_BACK, "Player 2 Back");
 	}
-
-	p1Name.flags = DT_CENTER;
-	p1Name.color = 0xFFFF0000;
-
-	p2Name.flags = DT_CENTER;
-	p2Name.color = 0xFF0000FF;
-}
-
-Game::~Game() {
-	shutdown();
-}
-
-void Game::init() {
-	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",D3DXCOLOR(255,0,0,0))->resource;
-	backGround.color = 0xFFFFFFFF;
-	backGround.rec.left = 0;
-	backGround.rec.top = 0;
-	backGround.rec.right = backGround.image->texInfo.Width;
-	backGround.rec.bottom = backGround.image->texInfo.Height;
-	backGround.center = D3DXVECTOR3(backGround.rec.right/2.0f,backGround.rec.bottom/2.0f,0);
-
-	CharacterInfo tempChar;
-	tempChar.icon.rec.top = 0;
-	tempChar.icon.rec.left = 0;
-	tempChar.icon.color = 0xFFFFFFFF;
-
-	//Drew Scanlon
-	tempChar.name = "Drew Scanlon";
-	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
-	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
-	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
-	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
-
-	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = noPower;
-	}
-
-	charList.push_back(tempChar);
-
-	//Dan Ryckert
-	tempChar.name = "Dan Ryckert";
-	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DanRyckert.jpg",image)->resource;
-	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
-	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
-	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
-
-	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = noPower;
-	}
-
-	charList.push_back(tempChar);
-
-	tempChar.name = "Hideo Kojima";
-	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("HideoMB2.jpg",image)->resource;
-	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
-	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
-	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
-
-	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = noPower;
-	}
-	tempChar.abilities[1] = box;
-	tempChar.abilities[2] = gop;
-
-	charList.push_back(tempChar);
-	Engine::instance()->setRepeat(0.2f);
-
-	tetris.Init();
 }
 
 void Game::shutdown() {

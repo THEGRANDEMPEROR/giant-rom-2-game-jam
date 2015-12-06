@@ -21,7 +21,7 @@ const int xOffsetP2 = 768;
 const int yOffsetP2 = 32;
 
 
-
+enum PlayerEffect;
 
 enum spotstuff {
 	EMPTY,
@@ -80,7 +80,7 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update(int a_controller, int a_speed);
+	void Update(int a_controller, int a_speed,PlayerEffect effect);
 	void Draw(int a_player);
 	void Reset();
 	void setPiece(Tetrimino& piece);
@@ -89,6 +89,9 @@ public:
 	bool needPiece();
 	void Solidify();
 	int LinesToSend();
+	void setLinesToSend(int toSend) {linestosend = toSend;}
+	TetriminoType curType();
+	bool curTetMagic();
 	//gets the amount of magic to add to player
 	int getMagic(){return magic;}
 	//sets magic to 0
