@@ -1,3 +1,4 @@
+#include "Magic.h"
 #include "Game.h"
 #include <fstream>
 
@@ -230,7 +231,7 @@ void Game::init() {
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
 
 	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = NULL;
+		tempChar.abilities[i] = noPower;
 	}
 
 	charList.push_back(tempChar);
@@ -243,7 +244,7 @@ void Game::init() {
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
 
 	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = NULL;
+		tempChar.abilities[i] = noPower;
 	}
 
 	charList.push_back(tempChar);
@@ -255,7 +256,7 @@ void Game::init() {
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
 
 	for(int i = 0; i < 4; ++i) {
-		tempChar.abilities[i] = NULL;
+		tempChar.abilities[i] = noPower;
 	}
 
 	charList.push_back(tempChar);
@@ -270,6 +271,10 @@ void Game::shutdown() {
 
 void Game::startTetris() {
 	curState = gplay;
+	for(int i = 0; i < 4; ++i) {
+		tetris.setMagic(0,i,charList[p1Select].abilities[i]);
+		tetris.setMagic(1,i,charList[p2Select].abilities[i]);
+	}
 	tetris.Reset(_magic, _rensa);
 	//Engine::instance()->setRepeat(0.1f); // maybe change this
 }
@@ -283,7 +288,7 @@ bool Game::update() {
 			tempInfo.type = screenSprite;
 			tempInfo.asset = &backGround;
 			D3DXMatrixIdentity(&tempInfo.matrix);
-			D3DXMatrixTranslation(&tempInfo.matrix,1280/2,720/4,0);
+			D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/4,0);
 			Engine::instance()->addRender(tempInfo);
 
 			if(Engine::instance()->getMessage("CharSelect")) {
@@ -367,7 +372,7 @@ bool Game::update() {
 				tempRec.right = 0.5f;
 				p1Name.text = charList[p1Select].name;
 			} else {
-				tempRec.top = (p1Select*0.33f);
+				tempRec.top = (p1Select*(1.0f/charList.size()));
 				tempRec.bottom = tempRec.top + 0.1;
 				tempRec.left = 0.4f;
 				tempRec.right = 0.6f;
@@ -384,7 +389,7 @@ bool Game::update() {
 				tempRec.right = 1.0f;
 				p2Name.text = charList[p2Select].name;
 			} else {
-				tempRec.top = 0.2+(p2Select*0.33f);
+				tempRec.top = 0.2+(p2Select*(1.0f/charList.size()));
 				tempRec.bottom = tempRec.top + 0.1;
 				tempRec.left = 0.4f;
 				tempRec.right = 0.6f;
@@ -400,8 +405,8 @@ bool Game::update() {
 				tempInfo.asset = &charList[i].icon;
 				D3DXMatrixIdentity(&tempInfo.matrix);
 				D3DXMatrixIdentity(&charTrans);
-				D3DXMatrixScaling(&tempInfo.matrix,240.0f/charList[i].icon.image->texInfo.Width,240.0f/charList[i].icon.image->texInfo.Height,0);
-				D3DXMatrixTranslation(&charTrans,1280.0f/2,120+(i*240),0);
+				D3DXMatrixScaling(&tempInfo.matrix,((float)(Engine::instance()->height()/charList.size()))/charList[i].icon.image->texInfo.Width,((float)(Engine::instance()->height()/charList.size()))/charList[i].icon.image->texInfo.Height,0);
+				D3DXMatrixTranslation(&charTrans,Engine::instance()->width()/2.0f,((Engine::instance()->height()/charList.size())/2.0f)+(i*(Engine::instance()->height()/charList.size())),0);
 				D3DXMatrixMultiply(&tempInfo.matrix,&tempInfo.matrix,&charTrans);
 				Engine::instance()->addRender(tempInfo);
 			}

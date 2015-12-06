@@ -81,6 +81,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="Magic.h" />
     <ClInclude Include="MenuSystem.h" />
     <ClInclude Include="MessageSystem.h" />
     <ClInclude Include="RenVector.h" />

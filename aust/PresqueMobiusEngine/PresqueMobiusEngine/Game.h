@@ -21,7 +21,7 @@ struct CharacterInfo {
 	spriteStruct icon;
 	spriteStruct selectBackground;
 	spriteStruct victoryBackground;
-	void (*abilities[4])();
+	void (*abilities[4])(Player*,Player*);
 };
 
 class Game {

@@ -1,5 +1,6 @@
 #pragma once
 #include "TetrisGame.h"
+#include "Magic.h"
 
 
 
@@ -18,6 +19,10 @@ Player::~Player() {
 void Player::Init(int a_player) {
 	tetris.Init();
 	player = a_player;
+	for(int i = 0; i < 4; ++i) {
+		abilities[i] = noPower;
+	}
+	magic = 0;
 }
 
 
@@ -32,6 +37,34 @@ void Player::Draw() {
 	tetris.Draw(player);
 }
 
+void Player::setMagic(int level, void (*func)(Player*,Player*)) {
+	abilities[level] = func;
+}
+
+void Player::useMagic(Player* otherPlayer) {
+	if(controller == 0) {
+		if(Engine::instance()->getFlags("Player 1 Up DPAD")&buttonFlags::_pushed) {
+			if(magic >= 4) {
+				abilities[4](this,otherPlayer);
+			} else {
+				if(magic > 0) {
+					abilities[magic-1](this,otherPlayer);
+				}
+			}
+		}
+	} else {
+		if(Engine::instance()->getFlags("Player 2 Up DPAD")&buttonFlags::_pushed) {
+			if(magic >= 4) {
+				abilities[3](this,otherPlayer);
+			} else {
+				if(magic > 0) {
+					abilities[magic-1](this,otherPlayer);
+				}
+			}
+		}
+	}
+}
+
 
 void Player::BindCont(int a_controller) { // 0 keyboard. 1-4 gamepads.
 	controller = a_controller;
@@ -39,6 +72,7 @@ void Player::BindCont(int a_controller) { // 0 keyboard. 1-4 gamepads.
 
 
 void Player::Reset() {
+	magic = 0;
 	tetris.Reset();
 }
 
@@ -175,6 +209,8 @@ void TetrisGame::Update() {
 	if (running) {
 		for (int i = 0; i < NUMPLAYERS; ++i) {
 			players[i].Update();
+			//use magic
+			players[i].useMagic(&players[i==0]);
 			if(players[i].needPiece()) {
 				players[i].setPiece(tetqueue[0]);
 				tetqueue.erase(tetqueue.begin());
@@ -259,7 +295,7 @@ void TetrisGame::DrawQueue() {
 				tempinfo.asset = &bluesprite;
 			}
 			//
-			D3DXMatrixTranslation(&translation,(tetqueue[g].getBlock(i).getPos().x*((spriteStruct*)tempinfo.asset)->rec.right)+200,tetqueue[g].getBlock(i).getPos().y*((spriteStruct*)tempinfo.asset)->rec.bottom+(g*100),0);
+			D3DXMatrixTranslation(&translation,(tetqueue[g].getBlock(i).getPos().x*((spriteStruct*)tempinfo.asset)->rec.right)+(Engine::instance()->width()/2)-(((spriteStruct*)tempinfo.asset)->rec.right*4), tetqueue[g].getBlock(i).getPos().y*((spriteStruct*)tempinfo.asset)->rec.bottom+(g*100)+((spriteStruct*)tempinfo.asset)->rec.bottom,0);
 			D3DXMatrixScaling(&scaling,1,1,1);
 			D3DXMatrixMultiply(&tempinfo.matrix,&scaling,&translation);
 			Engine::instance()->addRender(tempinfo);
@@ -267,4 +303,6 @@ void TetrisGame::DrawQueue() {
 	}
 }
 
-
+void TetrisGame::setMagic(int player, int level, void (*func)(Player*,Player*)) {
+	players[player].setMagic(level,func);
+}
