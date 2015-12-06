@@ -243,8 +243,8 @@ void Game::init() {
 	Engine::instance()->bind(pad1_DOWN, "SelectionDownDpad");
 	Engine::instance()->bind(pad1_A, "Accept");
 	//keyboard
-	Engine::instance()->bind(W, "SelectionUp2");
-	Engine::instance()->bind(S, "SelectionDown2");
+	Engine::instance()->bind(UP, "SelectionUp2");
+	Engine::instance()->bind(DOWN, "SelectionDown2");
 	Engine::instance()->bind(SPACE, "Accept2");
 
 	// Keyboard
@@ -302,9 +302,9 @@ void Game::init() {
 		tetris.BindPlayer(1, 2); // second player. gamepads are 1-4 so second gamepad.
 	} else {
 		// player 1 keyboard
-		tetris.BindPlayer(0, 0); // first player. keyboard is 0.
+		tetris.BindPlayer(0, 1); // first player. keyboard is 0.
 		// player 2 gamepad 1
-		tetris.BindPlayer(1, 1); // second player. gamepads are 1-4 so first gamepad.
+		tetris.BindPlayer(1, 0); // second player. gamepads are 1-4 so first gamepad.
 	}
 }
 
