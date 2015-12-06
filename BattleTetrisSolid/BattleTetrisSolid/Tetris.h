@@ -20,6 +20,7 @@ const int yOffsetP1 = 32;
 const int xOffsetP2 = 768;
 const int yOffsetP2 = 32;
 
+const int SAMECOLUMNGARBAGECHANCE = 2;
 
 
 
@@ -58,6 +59,8 @@ private:
 	int speed;
 	float timeheld;
 	bool iNeedATetrimino;
+	bool needgarbage;
+	bool alive;
 	Tetrimino curtet;
 	spriteStruct bluesprite;
 	spriteStruct magicsprite;
@@ -75,7 +78,12 @@ private:
 	int checkAllLines();
 	void removeLine(int a_line);
 	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
+	// for use after being pushed up. Deathzone should always be empty
+	void ClearDeathZone();
+	
+	
 	int magic;
+	
 public:
 	Tetris();
 	~Tetris();
@@ -85,14 +93,20 @@ public:
 	void Reset();
 	void setPiece(Tetrimino& piece);
 	void transformMagic();
-	
+
 	bool needPiece();
+	bool needGarbage();
 	void Solidify();
 	int LinesToSend();
+	void setLinesToSend(int a_lines);
 	//gets the amount of magic to add to player
 	int getMagic(){return magic;}
 	//sets magic to 0
 	void clearMagic(){magic = 0;}
+	// adds garbage lines at the bottom
+	void addGarbage(int a_garbage);
+	// returns true if alive
+	bool Living();
 };
 
 

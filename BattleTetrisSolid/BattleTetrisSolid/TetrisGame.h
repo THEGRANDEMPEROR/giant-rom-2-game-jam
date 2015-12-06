@@ -8,6 +8,7 @@ const int MAGICCHANCE = 5;
 
 const int TIMETOSPEEDUP = 15;
 const int MAXSPEED = 9;
+const int MAXWINS = 2;
 //const int Xqueueoffset = 
 
 
@@ -48,12 +49,23 @@ public:
 	void setUsingMagic(float magicTime);
 	void setBlocked(float blockedTime);
 	Tetris* getTetris(){return &tetris;}
+	
+	int LinesToSend();
+	void setLinesToSend(int a_lines);
+	void addGarbage(int a_lines);
+
+	// returns true if they are about to solidify, and need some garbage lines.
+	bool needGarbage();
+	bool Living();
 };
 
 
 class TetrisGame {
 private:
 	Player players[NUMPLAYERS];
+	// number of wins.
+	int p1wins, p2wins;
+
 	bool running;
 	std::vector <Tetrimino> tetqueue; // TETQUEUENO
 	bool magic;
@@ -76,6 +88,8 @@ private:
 
 	Tetrimino randomTet(); // TETQUEUENO returns a random tetrimino
 	void DrawQueue(); // TETQUEUENO not finished
+	// cancels out each other's lines if both sides have linestosend. 2 and 1 becomes 1 and 0. 7 and 2 becomes 5 and 0
+	void CancelOutLines();
 public:
 	TetrisGame();
 	~TetrisGame();
@@ -83,6 +97,6 @@ public:
 	void Update();
 	void Draw();
 	void BindPlayer(int a_player, int a_controller); // 0 keyboard. 1-4 gamepads.
-	void Reset(bool a_magic, bool a_rensa);
+	void Reset(bool a_magic, bool a_rensa, bool a_winsreset);
 	void setMagic(int player,int level,void (*func)(Player*,Player*));
 };
