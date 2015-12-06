@@ -1,5 +1,0 @@
-279584
-3
-Speakers (Realtek High Definition Audio)
-Realtek Digital Output (Realtek High Definition Audio)
-Realtek Digital Output(Optical) (Realtek High Definition Audio)

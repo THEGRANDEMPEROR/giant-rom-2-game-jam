@@ -41,6 +41,8 @@ public:
 	void reset(HWND hWnd,HINSTANCE hInsts);
 	void shutdown();
 	bool isLost();
+	int width() {return vFrame.getWidth();}
+	int height() {return vFrame.getHeight();}
 
 	double dt() {return _dt;}
 	void updatesPerSecond(int updates) {_updateTime = _cpuRate/updates;}
