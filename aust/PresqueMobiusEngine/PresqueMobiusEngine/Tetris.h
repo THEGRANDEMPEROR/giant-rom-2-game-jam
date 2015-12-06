@@ -79,7 +79,7 @@ private:
 	int checkAllLines();
 	void removeLine(int a_line);
 	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
-	
+	int magic;
 public:
 	Tetris();
 	~Tetris();
@@ -88,10 +88,15 @@ public:
 	void Draw(int a_player);
 	void Reset();
 	void setPiece(Tetrimino& piece);
-
+	void transformMagic();
+	
 	bool needPiece();
 	void Solidify();
 	int LinesToSend();
+	//gets the amount of magic to add to player
+	int getMagic(){return magic;}
+	//sets magic to 0
+	void clearMagic(){magic = 0;}
 };
 
 

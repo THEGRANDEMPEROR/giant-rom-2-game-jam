@@ -179,7 +179,28 @@ Game::Game() {
 		tetris.BindPlayer(0, 1); // first player. gamepads are 1-4 so first gamepad.
 		// player 2 gamepad 2
 		tetris.BindPlayer(1, 2); // second player. gamepads are 1-4 so second gamepad.
-
+		// player 1
+		Engine::instance()->bind(pad1_RIGHT, "Player 1 Right DPAD");
+		Engine::instance()->bind(pad1_UP, "Player 1 Up DPAD");
+		Engine::instance()->bind(pad1_LEFT, "Player 1 Left DPAD");
+		Engine::instance()->bind(pad1_DOWN, "Player 1 Down DPAD");
+		Engine::instance()->bind(pad1_A, "Player 1 A");
+		Engine::instance()->bind(pad1_B, "Player 1 B");
+		Engine::instance()->bind(pad1_X, "Player 1 X");
+		Engine::instance()->bind(pad1_Y, "Player 1 Y");
+		Engine::instance()->bind(pad1_START, "Player 1 Start");
+		Engine::instance()->bind(pad1_BACK, "Player 1 Back");
+		// player 2
+		Engine::instance()->bind(pad2_RIGHT, "Player 2 Right DPAD");
+		Engine::instance()->bind(pad2_UP, "Player 2 Up DPAD");
+		Engine::instance()->bind(pad2_LEFT, "Player 2 Left DPAD");
+		Engine::instance()->bind(pad2_DOWN, "Player 2 Down DPAD");
+		Engine::instance()->bind(pad2_A, "Player 2 A");
+		Engine::instance()->bind(pad2_B, "Player 2 B");
+		Engine::instance()->bind(pad2_X, "Player 2 X");
+		Engine::instance()->bind(pad2_Y, "Player 2 Y");
+		Engine::instance()->bind(pad2_START, "Player 2 Start");
+		Engine::instance()->bind(pad2_BACK, "Player 2 Back");
 	} else {
 		//one controller
 		//keyboard
@@ -197,6 +218,29 @@ Game::Game() {
 		tetris.BindPlayer(0, 0); // first player. keyboard is 0.
 		// player 2 gamepad 2
 		tetris.BindPlayer(1, 1); // second player. gamepads are 1-4 so first gamepad.
+		// player 1
+		//TODO FIGURE OUT WHAT TO MAKE THESE
+		Engine::instance()->bind(D, "Player 1 Right DPAD");
+		Engine::instance()->bind(W, "Player 1 Up DPAD");
+		Engine::instance()->bind(A, "Player 1 Left DPAD");
+		Engine::instance()->bind(S, "Player 1 Down DPAD");
+		Engine::instance()->bind(K, "Player 1 A");
+		Engine::instance()->bind(L, "Player 1 B");
+		Engine::instance()->bind(J, "Player 1 X");
+		Engine::instance()->bind(I, "Player 1 Y");
+		Engine::instance()->bind(RETURN, "Player 1 Start");
+		Engine::instance()->bind(BACK, "Player 1 Back");
+		// player 2
+		Engine::instance()->bind(pad1_RIGHT, "Player 2 Right DPAD");
+		Engine::instance()->bind(pad1_UP, "Player 2 Up DPAD");
+		Engine::instance()->bind(pad1_LEFT, "Player 2 Left DPAD");
+		Engine::instance()->bind(pad1_DOWN, "Player 2 Down DPAD");
+		Engine::instance()->bind(pad1_A, "Player 2 A");
+		Engine::instance()->bind(pad1_B, "Player 2 B");
+		Engine::instance()->bind(pad1_X, "Player 2 X");
+		Engine::instance()->bind(pad1_Y, "Player 2 Y");
+		Engine::instance()->bind(pad1_START, "Player 2 Start");
+		Engine::instance()->bind(pad1_BACK, "Player 2 Back");
 	}
 
 	p1Name.flags = DT_CENTER;
@@ -224,6 +268,7 @@ void Game::init() {
 	tempChar.icon.rec.left = 0;
 	tempChar.icon.color = 0xFFFFFFFF;
 
+	//Drew Scanlon
 	tempChar.name = "Drew Scanlon";
 	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
@@ -258,6 +303,8 @@ void Game::init() {
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
 	}
+	tempChar.abilities[1] = box;
+	tempChar.abilities[2] = gop;
 
 	charList.push_back(tempChar);
 	Engine::instance()->setRepeat(0.2f);

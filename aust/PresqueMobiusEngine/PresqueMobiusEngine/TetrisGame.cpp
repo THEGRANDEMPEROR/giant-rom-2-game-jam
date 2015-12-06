@@ -23,12 +23,39 @@ void Player::Init(int a_player) {
 		abilities[i] = noPower;
 	}
 	magic = 0;
+	immune = 0;
+	magicBlocked = 0;
+	magicRunning = 0;
+	maxMagic = 20;
 }
 
 
 void Player::Update() {
 	// draw character?
 	tetris.Update(controller);
+	magic += tetris.getMagic();
+	if(magic > maxMagic) {
+		magic = maxMagic;
+	}
+	tetris.clearMagic();
+	if(immune > 0) {
+		immune -= Engine::instance()->dt();
+		if(immune < 0) {
+			immune = 0;
+		}
+	}
+	if(magicBlocked > 0) {
+		magicBlocked -= Engine::instance()->dt();
+		if(magicBlocked < 0) {
+			magicBlocked = 0;
+		}
+	}
+	if(magicRunning > 0) {
+		magicRunning -= Engine::instance()->dt();
+		if(magicRunning < 0) {
+			magicRunning = 0;
+		}
+	}
 }
 
 
@@ -42,23 +69,25 @@ void Player::setMagic(int level, void (*func)(Player*,Player*)) {
 }
 
 void Player::useMagic(Player* otherPlayer) {
-	if(controller == 0) {
-		if(Engine::instance()->getFlags("Player 1 Up DPAD")&buttonFlags::_pushed) {
-			if(magic >= 4) {
-				abilities[4](this,otherPlayer);
-			} else {
-				if(magic > 0) {
-					abilities[magic-1](this,otherPlayer);
+	if(!isUsingMagic()&&!isBlocked()) {
+		if(controller == 0) {
+			if(Engine::instance()->getFlags("Player 1 Up DPAD")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
+					}
 				}
 			}
-		}
-	} else {
-		if(Engine::instance()->getFlags("Player 2 Up DPAD")&buttonFlags::_pushed) {
-			if(magic >= 4) {
-				abilities[3](this,otherPlayer);
-			} else {
-				if(magic > 0) {
-					abilities[magic-1](this,otherPlayer);
+		} else {
+			if(Engine::instance()->getFlags("Player 2 Up DPAD")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
+					}
 				}
 			}
 		}
@@ -73,6 +102,9 @@ void Player::BindCont(int a_controller) { // 0 keyboard. 1-4 gamepads.
 
 void Player::Reset() {
 	magic = 0;
+	immune = 0;
+	magicBlocked = 0;
+	magicRunning = 0;
 	tetris.Reset();
 }
 
@@ -84,6 +116,24 @@ void Player::setPiece(Tetrimino& piece) {
 	tetris.setPiece(piece);
 }
 
+void Player::subMagic(int dec) {
+	magic -= dec;
+	if(magic < 0) {
+		magic = 0;
+	}
+}
+
+void Player::setBlocked(float timeBlocked) {
+	magicBlocked = timeBlocked;
+}
+
+void Player::setImmune(float timeImmune) {
+	immune = timeImmune;
+}
+
+void Player::setUsingMagic(float timeUsingMagic) {
+	magicRunning = timeUsingMagic;
+}
 
 TetrisGame::TetrisGame() {
 
@@ -100,28 +150,7 @@ void TetrisGame::Init() {
 		players[i].Init(i);
 	}
 	running = true;
-	// player 1
-	Engine::instance()->bind(pad1_RIGHT, "Player 1 Right DPAD");
-	Engine::instance()->bind(pad1_UP, "Player 1 Up DPAD");
-	Engine::instance()->bind(pad1_LEFT, "Player 1 Left DPAD");
-	Engine::instance()->bind(pad1_DOWN, "Player 1 Down DPAD");
-	Engine::instance()->bind(pad1_A, "Player 1 A");
-	Engine::instance()->bind(pad1_B, "Player 1 B");
-	Engine::instance()->bind(pad1_X, "Player 1 X");
-	Engine::instance()->bind(pad1_Y, "Player 1 Y");
-	Engine::instance()->bind(pad1_START, "Player 1 Start");
-	Engine::instance()->bind(pad1_BACK, "Player 1 Back");
-	// player 2
-	Engine::instance()->bind(pad2_RIGHT, "Player 2 Right DPAD");
-	Engine::instance()->bind(pad2_UP, "Player 2 Up DPAD");
-	Engine::instance()->bind(pad2_LEFT, "Player 2 Left DPAD");
-	Engine::instance()->bind(pad2_DOWN, "Player 2 Down DPAD");
-	Engine::instance()->bind(pad2_A, "Player 2 A");
-	Engine::instance()->bind(pad2_B, "Player 2 B");
-	Engine::instance()->bind(pad2_X, "Player 2 X");
-	Engine::instance()->bind(pad2_Y, "Player 2 Y");
-	Engine::instance()->bind(pad2_START, "Player 2 Start");
-	Engine::instance()->bind(pad2_BACK, "Player 2 Back");
+	//moved binds to game.cpp
 
 	rensa = false; // default off
 	magic = true; // default on
@@ -136,13 +165,21 @@ void TetrisGame::Init() {
 	bluesprite.color = 0xFFFFFFFF;
 	bluesprite.center = D3DXVECTOR3(bluesprite.image->texInfo.Width / 2.0f, bluesprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the magic sprite
-	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
+	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png",0x00FFFFFF)->resource;
 	magicsprite.rec.top = 0;
 	magicsprite.rec.left = 0;
 	magicsprite.rec.right = magicsprite.image->texInfo.Width;
 	magicsprite.rec.bottom = magicsprite.image->texInfo.Height;
 	magicsprite.color = 0xFFFFFFFF;
 	magicsprite.center = D3DXVECTOR3(magicsprite.image->texInfo.Width / 2.0f, magicsprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the locked magic sprite
+	lockedMagicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
+	lockedMagicsprite.rec.top = 0;
+	lockedMagicsprite.rec.left = 0;
+	lockedMagicsprite.rec.right = magicsprite.image->texInfo.Width;
+	lockedMagicsprite.rec.bottom = magicsprite.image->texInfo.Height;
+	lockedMagicsprite.color = 0xFF7F7F7F;
+	lockedMagicsprite.center = D3DXVECTOR3(magicsprite.image->texInfo.Width / 2.0f, magicsprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the dark blue sprite
 	darkbluesprite.image = (imageAsset*)Engine::instance()->getResource("element_dark_blue_square.png", image)->resource;
 	darkbluesprite.rec.top = 0;
@@ -222,9 +259,22 @@ void TetrisGame::Update() {
 
 
 void TetrisGame::Draw() {
+	renInfo tempInfo;
 	if (running) {
+		tempInfo.type = screenSprite;
+		D3DXMatrixIdentity(&tempInfo.matrix);
 		for (int i = 0; i < NUMPLAYERS; ++i) {
 			players[i].Draw();
+			//draw magic
+			if(players[i].isBlocked()) {
+				tempInfo.asset = &lockedMagicsprite;
+			} else {
+				tempInfo.asset = &magicsprite;
+			}
+			for(int x = 0; x < players[i].getMagic(); ++x) {
+				D3DXMatrixTranslation(&tempInfo.matrix,(Engine::instance()->width()/2)-(magicsprite.rec.right*5)+((magicsprite.rec.right*7)*i), Engine::instance()->height()-magicsprite.rec.bottom-(magicsprite.rec.bottom*x),0);
+				Engine::instance()->addRender(tempInfo);
+			}
 		}
 		DrawQueue();
 	}

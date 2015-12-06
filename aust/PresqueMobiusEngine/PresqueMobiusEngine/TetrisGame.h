@@ -17,6 +17,10 @@ private:
 	int controller; // 0 keyboard. 1-4 gamepads. 
 	int player;
 	int magic;
+	int maxMagic;
+	float immune;
+	float magicBlocked;
+	float magicRunning;
 	Tetris tetris;
 	// abilities
 	void (*abilities[4])(Player* ,Player*);
@@ -32,7 +36,16 @@ public:
 	bool needPiece();
 	void setMagic(int magicLevel,void (*magicFunc)(Player*,Player*));
 	int getMagic() {return magic;}
+	void subMagic(int ammount);
 	void setPiece(Tetrimino& piece);
+	bool isImmune(){return immune > 0;}
+	bool isBlocked(){return magicBlocked > 0;}
+	bool isUsingMagic(){return magicRunning > 0;}
+	//immune time is in seconds
+	void setImmune(float immuneTime);
+	void setUsingMagic(float magicTime);
+	void setBlocked(float blockedTime);
+	Tetris* getTetris(){return &tetris;}
 };
 
 
@@ -54,6 +67,7 @@ private:
 	spriteStruct purplesprite;
 	spriteStruct redsprite;
 	spriteStruct yellowsprite;
+	spriteStruct lockedMagicsprite;
 
 
 	Tetrimino randomTet(); // TETQUEUENO returns a random tetrimino

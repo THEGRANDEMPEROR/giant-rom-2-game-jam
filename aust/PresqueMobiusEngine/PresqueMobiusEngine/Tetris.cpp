@@ -35,6 +35,18 @@ Tetris::~Tetris() {
 
 }
 
+//turns magic into normal blocks
+void Tetris::transformMagic() {
+	spot tempSpot;
+	for(int x = 0; x < FIELD_SIZE_X; ++x) {
+		for(int y = 0; y < FIELD_SIZE_Y; ++y) {
+			if(field[x][y].getStuff() == NANO) {
+				field[x][y].setStuff(BLOCK);
+			}
+		}
+	}
+}
+
 
 void Tetris::Init() {
 	// Initialize the blue sprite
@@ -46,7 +58,7 @@ void Tetris::Init() {
 	bluesprite.color = 0xFFFFFFFF;
 	bluesprite.center = D3DXVECTOR3(bluesprite.image->texInfo.Width / 2.0f, bluesprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the magic sprite
-	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
+	magicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", 0x00FFFFFF)->resource;
 	magicsprite.rec.top = 0;
 	magicsprite.rec.left = 0;
 	magicsprite.rec.right = magicsprite.image->texInfo.Width;
@@ -132,7 +144,7 @@ void Tetris::Init() {
 	iNeedATetrimino = true;
 
 	curtet.Init(LINE, true);
-
+	magic = 0;
 
 
 
@@ -347,6 +359,7 @@ void Tetris::Reset() {
 	numlines = 0;
 	speed = 1;
 	linestosend = 0;
+	magic = 0;
 	//curtet = randomTet();
 	for (int x = 0; x < FIELD_SIZE_X; ++x) {
 		for (int y = 0; y < FIELD_SIZE_Y; ++y) {
@@ -431,18 +444,26 @@ void Tetris::Solidify() {
 int Tetris::checkAllLines() {
 	int lowestline = 0; // probably don't need this
 	int numlines = 0;
+	int tempMagic;
 	bool tempbool = true;
 
 	for (int y = 0; y < FIELD_SIZE_Y; ++y) { // each row
 		tempbool = true;									// reset tembool at each row
+		tempMagic = 0;										// reset count at each row
 		for (int x = 0; x < FIELD_SIZE_X && tempbool; ++x) { // each column, as long as you don't find an empty space
-			if (field[x][y].getStuff() == EMPTY)			// if there's an empty space
+			if (field[x][y].getStuff() == EMPTY) {			// if there's an empty space
 				tempbool = false;							// change tempbool to false
+			} else if(field[x][y].getStuff() == NANO) {		//count Nanos in the line
+				++tempMagic;
+			}
+			
+											
 
 		}
 		if (tempbool) {										// If you made it through the whole row without an empty space,
 			removeLine(y);									// remove that line, moving everything above it down, CHANGE THIS FOR RENSA MODE
 			++numlines;										// and increment numlines
+			magic += tempMagic;								// and add magic cleared
 			lowestline = y;									// and set the lowestline to y (important for rensa, i think.)
 		}
 	}
