@@ -143,10 +143,11 @@ void Tetris::Init() {
 	speed = 1;
 	timeheld = 0.0f;
 	iNeedATetrimino = true;
+	needgarbage = false;
 
 	curtet.Init(LINE, true);
 	magic = 0;
-
+	alive = true;
 
 
 }
@@ -383,6 +384,8 @@ void Tetris::Reset() {
 	}
 	timeheld = 0.0f;
 	iNeedATetrimino = true;
+	needgarbage = false;
+	alive = true;
 }
 
 
@@ -434,6 +437,7 @@ void Tetris::TryToMove(int a_x, float a_y) {
 				}
 			}
 			Solidify();
+			needgarbage = true;
 		}
 	}
 }
@@ -444,7 +448,6 @@ void Tetris::Solidify() {
 	for (int i = 0; i < TETRIMINO_SIZE; ++i) { // for each block in curtet,
 		tempx = curtet.getBlock(i).getPos().x; // save the position of the block, so we don't have to get it again
 		tempy = curtet.getBlock(i).getPos().y; // float to int, which is kinda bad but w/e man
-
 		if (curtet.getBlock(i).getMagic())
 			field[tempx][tempy].setStuff(NANO);
 		else
@@ -452,8 +455,18 @@ void Tetris::Solidify() {
 	}
 
 	// tetrimino change used to be here
+	int tempdeath = linestosend;
 	linestosend += checkAllLines();
 	iNeedATetrimino = true;
+
+	// check for death stuff
+	tempdeath = linestosend - tempdeath;
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+		if (curtet.getBlock(i).getPos().y + tempdeath < DEATHZONE)
+			alive = false;
+	}
+
+
 }
 
 
@@ -565,11 +578,79 @@ int Tetris::LinesToSend() {
 }
 
 
+void Tetris::setLinesToSend(int a_lines) {
+	linestosend = a_lines;
+}
+
+
 bool Tetris::needPiece() {
 	return iNeedATetrimino;
 }
+
+
+bool Tetris::needGarbage() {
+	return needgarbage;
+}
+
 
 void Tetris::setPiece(Tetrimino& piece) {
 	curtet = piece;
 	iNeedATetrimino = false;
 }
+
+
+void Tetris::addGarbage(int a_garbage) {
+
+	if (a_garbage > 0) {
+		for (int x = 0; x < FIELD_SIZE_X; ++x) { // for each column,
+			for (int y = 0; y < FIELD_SIZE_Y; ++y) { // and each row (starting from the bottom and going up to the DEATHZONE)
+				if (y >= FIELD_SIZE_Y - a_garbage) { // if you're within the bottom and a_garbage,
+					field[x][y].setStuff(BLOCK); // fill that area in.
+				}
+				else // if you're above a_garbage, bump things up by a_garbage
+					field[x][y].setStuff(field[x][y + a_garbage].getStuff()); // move things up by a_garbage
+			}
+		}
+
+		int random = rand() % SAMECOLUMNGARBAGECHANCE;
+		int temp = 0;
+		if (random == 0) { // garbage hole is in the same column as before
+			for (int x = 0; x < FIELD_SIZE_X; ++x) { // for each column,
+				if (field[x][FIELD_SIZE_Y - a_garbage - 1].getStuff() == EMPTY) {
+					temp = x;
+
+				}
+			}
+
+		}
+		else { // garbage hole is in a random column
+			temp = rand() % FIELD_SIZE_X;
+		}
+
+		for (int y = FIELD_SIZE_Y - 1; y >= FIELD_SIZE_Y - a_garbage; --y) {
+			field[temp][y].setStuff(EMPTY);
+
+		}
+	}
+	ClearDeathZone();
+	needgarbage = false;
+
+
+}
+
+
+void Tetris::ClearDeathZone() {
+	for (int x = 0; x < FIELD_SIZE_X; ++x) {
+		for (int y = 0; y < DEATHZONE; ++y) {
+			field[x][y].setStuff(EMPTY);
+		}
+	}
+}
+
+
+bool Tetris::Living() {
+	return alive;
+}
+
+
+

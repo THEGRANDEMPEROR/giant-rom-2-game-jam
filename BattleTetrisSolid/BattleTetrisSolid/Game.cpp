@@ -332,7 +332,7 @@ void Game::startTetris() {
 		tetris.setMagic(0,i,charList[p1Select].abilities[i]);
 		tetris.setMagic(1,i,charList[p2Select].abilities[i]);
 	}
-	tetris.Reset(_magic, _rensa);
+	tetris.Reset(_magic, _rensa, true);
 	//Engine::instance()->setRepeat(0.1f); // maybe change this
 }
 

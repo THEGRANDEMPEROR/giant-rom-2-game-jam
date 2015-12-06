@@ -125,6 +125,33 @@ void Player::setUsingMagic(float timeUsingMagic) {
 	magicRunning = timeUsingMagic;
 }
 
+
+int Player::LinesToSend() {
+	return tetris.LinesToSend();
+}
+
+
+void Player::setLinesToSend(int a_lines) {
+	tetris.setLinesToSend(a_lines);
+}
+
+
+void Player::addGarbage(int a_lines) {
+	tetris.addGarbage(a_lines);
+}
+
+
+// returns true if they are about to solidify, and need some garbage lines.
+bool Player::needGarbage() {
+	return tetris.needGarbage();
+}
+
+
+bool Player::Living() {
+	return tetris.Living();
+}
+
+
 TetrisGame::TetrisGame() {
 
 }
@@ -143,6 +170,9 @@ void TetrisGame::Init() {
 	speed = 0;
 	speedtime = 0.0f;
 	//moved binds to game.cpp
+
+	p1wins = 0;
+	p2wins = 0;
 
 	rensa = false; // default off
 	magic = true; // default on
@@ -249,6 +279,20 @@ void TetrisGame::Update() {
 				tetqueue.push_back(randomTet());
 			}
 		}
+
+		CancelOutLines();
+		// send garbage if they just solidified a piece.
+		if (players[0].needGarbage()) {
+			players[0].addGarbage(players[1].LinesToSend());
+			players[1].setLinesToSend(0);
+		}
+		if (players[1].needGarbage()) {
+			players[1].addGarbage(players[0].LinesToSend());
+			players[0].setLinesToSend(0);
+		}
+
+
+		
 		speedtime += Engine::instance()->dt();
 		if(speedtime >= TIMETOSPEEDUP) {
 			if(speed < MAXSPEED) {
@@ -256,6 +300,30 @@ void TetrisGame::Update() {
 			}
 			speedtime = 0;
 		}
+
+
+
+		// make sure this is at the end
+		// Add an animation section probably, not sure how you did that for other states sad aust ANTIMATIONS SON
+		if (!players[0].Living()) { // player 1 loss, player 2 wins
+			p2wins++;
+			if (p2wins < MAXWINS) // p2 doesn't win yet
+				Reset(magic, rensa, false);
+			else {
+				Reset(magic, rensa, true); // MOVE THIS I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
+				// move to the Rematch, charselect, main menu screen
+			}
+		}
+		if (!players[1].Living()) { // player 2 loss, player 1 wins
+			p1wins++;
+			if (p1wins < MAXWINS) // p1 doesn't win yet
+				Reset(magic, rensa, false);
+			else {
+				Reset(magic, rensa, true); // MOVE THIS, I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
+				// move to the Rematch, charselect, main menu screen
+			}
+		}
+		
 	}
 }
 
@@ -289,7 +357,7 @@ void TetrisGame::BindPlayer(int a_player, int a_controller) { // 0 keyboard. 1-4
 
 
 
-void TetrisGame::Reset(bool a_magic, bool a_rensa) {
+void TetrisGame::Reset(bool a_magic, bool a_rensa, bool a_winsreset) {
 	for (int i = 0; i < NUMPLAYERS; ++i) {
 		players[i].Reset();
 	}
@@ -297,6 +365,10 @@ void TetrisGame::Reset(bool a_magic, bool a_rensa) {
 	rensa = a_rensa;
 	speed = 0;
 	speedtime = 0.0f;
+	if (a_winsreset) {
+		p1wins = 0;
+		p2wins = 0;
+	}
 }
 
 
@@ -356,6 +428,24 @@ void TetrisGame::DrawQueue() {
 		}
 	}
 }
+
+
+void TetrisGame::CancelOutLines() {
+	int temp1 = players[0].LinesToSend();
+	int temp2 = players[1].LinesToSend();
+	temp1 -= temp2;
+	temp2 -= players[0].LinesToSend();
+	if (temp1 < 0)
+		temp1 = 0;
+	if (temp2 < 0)
+		temp2 = 0;
+	players[0].setLinesToSend(temp1);
+	players[1].setLinesToSend(temp2);
+
+
+}
+
+
 
 void TetrisGame::setMagic(int player, int level, void (*func)(Player*,Player*)) {
 	players[player].setMagic(level,func);
