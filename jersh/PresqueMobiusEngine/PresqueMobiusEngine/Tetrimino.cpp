@@ -67,12 +67,11 @@ Tetrimino::~Tetrimino() {
 }
 
 
-Tetrimino::Tetrimino(Tetrimino &a_tet) {
+Tetrimino::Tetrimino(const Tetrimino &a_tet) {
 	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
-		blocks[i].setMagic(a_tet.getBlock(i).getMagic());
-		blocks[i].setPos(a_tet.getBlock(i).getPos());
+		blocks[i] = a_tet.blocks[i];
 	}
-	type = a_tet.getType();
+	type = a_tet.type;
 
 }
 
@@ -171,5 +170,13 @@ void Tetrimino::SetBlockPos(int a_index, fallingpos a_pos) {
 
 
 
+Tetrimino& Tetrimino::operator=(Tetrimino& a_tet) {
+	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+		blocks[i].setMagic(a_tet.getBlock(i).getMagic());
+		blocks[i].setPos(a_tet.getBlock(i).getPos());
+	}
+	type = a_tet.getType();
 
+	return *this;
+}
 

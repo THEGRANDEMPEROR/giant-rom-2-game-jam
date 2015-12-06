@@ -421,7 +421,7 @@ bool Game::update() {
 		tetris.Draw(); // SAD AUST IT CRASHES BECAUSE OF THIS I'M GOING TO BED WTF IS WRONG AAAAAAAAAAAAHHHHHHHHHHHHHHHHHHH
 						// CTRL+F FOR: dammitrender
 						// to get to my other comments showing where things are.
-						// never mind these comments
+						// never mind these comments lol
 
 	}
 

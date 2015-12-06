@@ -10,12 +10,7 @@ const int FIELD_SIZE_Y = 22; // the height of a standard tetris field. topmost 2
 const int DEATHZONE = 2; // top two rows equals death if you solidify there.
 
 
-
-const float dropspeed = 10.0f;
-const float basespeed = 1.0f;
-const float twospeed = 1.4f;
-const float threespeed = 1.8f;
-const float fourspeed = 2.2f;
+const float speedmultiplier = 0.3f;
 const float timetogofastsideways = 0.25f; // The time it takes for it to quickly move sideways while holding either direction
 
 const int xOffsetP1 = 128;
@@ -84,10 +79,12 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update(int a_controller);
+	void Update(int a_controller, int a_speed);
 	void Draw(int a_player);
 	void Reset();
+	void setPiece(Tetrimino& piece);
 
+	bool needPiece();
 	void Solidify();
 	int LinesToSend();
 };

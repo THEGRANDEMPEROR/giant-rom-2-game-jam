@@ -117,7 +117,7 @@ void changeWindow()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow )
 {
 	g_hInstance = hInstance;	// Store application handle
-	g_bWindowed = false;		// Windowed mode or full-screen
+	g_bWindowed = true;		// Windowed mode or full-screen
 	bool run = true;
 	// Init the window
 	InitWindow();

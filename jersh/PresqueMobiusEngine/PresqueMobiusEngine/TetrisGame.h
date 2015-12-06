@@ -6,6 +6,8 @@
 const int NUMPLAYERS = 2;
 const int MAGICCHANCE = 5;
 
+const int TIMETOSPEEDUP = 15;
+const int MAXSPEED = 9;
 //const int Xqueueoffset = 
 
 
@@ -23,10 +25,12 @@ public:
 	Player();
 	~Player();
 	void Init(int a_player);
-	void Update();
+	void Update(int a_speed);
 	void Draw();
 	void BindCont(int a_controller); // 0 keyboard. 1-4 gamepads.
 	void Reset();
+	bool needPiece();
+	void setPiece(Tetrimino& piece);
 };
 
 
@@ -37,6 +41,8 @@ private:
 	std::vector <Tetrimino> tetqueue; // TETQUEUENO
 	bool magic;
 	bool rensa;
+	int speed;
+	float speedtime;
 
 	// sprites for tetqeueue // TETQUEUENO
 	spriteStruct bluesprite;

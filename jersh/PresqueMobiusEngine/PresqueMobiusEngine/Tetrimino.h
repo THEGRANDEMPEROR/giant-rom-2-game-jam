@@ -62,7 +62,7 @@ private:
 public:
 	Tetrimino();
 	~Tetrimino();
-	Tetrimino(Tetrimino &a_tet);
+	Tetrimino(const Tetrimino &a_tet);
 	void Init(TetriminoType a_type, bool a_magic);
 	// Hardcoded starting positions depending on TetriminoType, possibly change that
 	// the magic block will always be Blocks[1] and should probably be rotated around.
@@ -72,6 +72,7 @@ public:
 	TetriminoType getType();
 	void Snap(bool a_snap); // snaps to grid. true = positive AKA down. false = negative AKA up
 	void SetBlockPos(int a_index, fallingpos a_pos);
+	Tetrimino& operator=(Tetrimino& a_tet);
 };
 
 

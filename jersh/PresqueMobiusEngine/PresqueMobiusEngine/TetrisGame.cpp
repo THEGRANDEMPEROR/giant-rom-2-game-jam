@@ -21,9 +21,9 @@ void Player::Init(int a_player) {
 }
 
 
-void Player::Update() {
+void Player::Update(int a_speed) {
 	// draw character?
-	tetris.Update(controller);
+	tetris.Update(controller, a_speed);
 }
 
 
@@ -42,6 +42,13 @@ void Player::Reset() {
 	tetris.Reset();
 }
 
+bool Player::needPiece() {
+	return tetris.needPiece();
+}
+
+void Player::setPiece(Tetrimino& piece) {
+	tetris.setPiece(piece);
+}
 
 
 TetrisGame::TetrisGame() {
@@ -59,6 +66,8 @@ void TetrisGame::Init() {
 		players[i].Init(i);
 	}
 	running = true;
+	speed = 0;
+	speedtime = 0.0f;
 	// player 1
 	Engine::instance()->bind(pad1_RIGHT, "Player 1 Right DPAD");
 	Engine::instance()->bind(pad1_UP, "Player 1 Up DPAD");
@@ -81,7 +90,7 @@ void TetrisGame::Init() {
 	Engine::instance()->bind(pad2_Y, "Player 2 Y");
 	Engine::instance()->bind(pad2_START, "Player 2 Start");
 	Engine::instance()->bind(pad2_BACK, "Player 2 Back");
-	
+
 	rensa = false; // default off
 	magic = true; // default on
 
@@ -151,12 +160,14 @@ void TetrisGame::Init() {
 	yellowsprite.color = 0xFFFFFFFF;
 	yellowsprite.center = D3DXVECTOR3(yellowsprite.image->texInfo.Width / 2.0f, yellowsprite.image->texInfo.Height / 2.0f, 0);
 
+
+
 	// initialize tetqueue
 	Tetrimino temptet;
-	//for (int i = 0; i < tetqueue.size(); ++i) {
-	//	temptet = randomTet();
-	//	tetqueue.push_back(temptet);
-	//} SADAUST TETQUEUENO
+	while(tetqueue.size() < 4) {
+		temptet = randomTet();
+		tetqueue.push_back(temptet);
+	}
 	// This is where I was initializing the tetqueue
 
 	//BindPlayer(0, a_p1cont); 
@@ -167,7 +178,19 @@ void TetrisGame::Init() {
 void TetrisGame::Update() {
 	if (running) {
 		for (int i = 0; i < NUMPLAYERS; ++i) {
-			players[i].Update();
+			players[i].Update(speed);
+			if(players[i].needPiece()) {
+				players[i].setPiece(tetqueue[0]);
+				tetqueue.erase(tetqueue.begin());
+				tetqueue.push_back(randomTet());
+			}
+		}
+		speedtime += Engine::instance()->dt();
+		if (speedtime >= TIMETOSPEEDUP) {
+			if (speed < MAXSPEED) {
+				++speed;
+			}
+			speedtime = 0;
 		}
 	}
 }
@@ -178,6 +201,7 @@ void TetrisGame::Draw() {
 		for (int i = 0; i < NUMPLAYERS; ++i) {
 			players[i].Draw();
 		}
+		DrawQueue();
 	}
 }
 
@@ -194,34 +218,36 @@ void TetrisGame::Reset(bool a_magic, bool a_rensa) {
 	}
 	magic = a_magic;
 	rensa = a_rensa;
+	speed = 0;
+	speedtime = 0.0f;
 }
 
 
 Tetrimino TetrisGame::randomTet() { // TETQUEUENO returns a random tetrimino
 	int random = rand() % NUM_TETRIMINO_TYPES; // chance to be each type
 	Tetrimino tet;
-
+	bool a_magic = false;
 	if (magic) { // magic in the options, son!
 		int random2 = rand() % MAGICCHANCE; // chance to be magic
-		bool magic = false;
+		
 
 		if (random2 == 0)
-			magic = true;
+			a_magic = true;
 	}
 	if (random == 0)
-		tet.Init(LINE, magic);
+		tet.Init(LINE, a_magic);
 	else if (random == 1)
-		tet.Init(SQUARE, magic);
+		tet.Init(SQUARE, a_magic);
 	else if (random == 2)
-		tet.Init(LPIECE, magic);
+		tet.Init(LPIECE, a_magic);
 	else if (random == 3)
-		tet.Init(JPIECE, magic);
+		tet.Init(JPIECE, a_magic);
 	else if (random == 4)
-		tet.Init(SPIECE, magic);
+		tet.Init(SPIECE, a_magic);
 	else if (random == 5)
-		tet.Init(ZPIECE, magic);
+		tet.Init(ZPIECE, a_magic);
 	else if (random == 6)
-		tet.Init(TPIECE, magic);
+		tet.Init(TPIECE, a_magic);
 
 
 	return tet;
@@ -229,61 +255,29 @@ Tetrimino TetrisGame::randomTet() { // TETQUEUENO returns a random tetrimino
 
 }
 
-//
-//void TetrisGame::DrawQueue() {
-//	D3DXMATRIX translation, scaling;
-//	renInfo tempinfo;
-//
-//	for (int g = 0; g < tetqueue.size(); ++g) {
-//		for (int i = 0; i < TETRIMINO_SIZE; ++i) {
-//			if (tetqueue[g].getType() == LINE) {
-//				tempinfo.type = screenSprite;
-//				tempinfo.asset = &bluesprite;
-//
-//				// Matrix transformation
-//				D3DXMatrixIdentity(&translation);
-//				D3DXMatrixIdentity(&scaling);
-//				D3DXMatrixIdentity(&tempinfo.matrix);
-//
-//				if (a_player == 0) {
-//					D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
-//				}
-//				else {
-//					D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
-//				}
-//				D3DXMatrixScaling(&scaling, 0.8f, 0.8f, 0.8f);
-//				D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
-//
-//				Engine::instance()->addRender(tempinfo);
-//
-//
-//
-//
-//			}
-//			else {
-//				tempinfo.type = screenSprite;
-//				tempinfo.asset = &magicsprite;
-//
-//				// Matrix transformation
-//				D3DXMatrixIdentity(&translation);
-//				D3DXMatrixIdentity(&scaling);
-//				D3DXMatrixIdentity(&tempinfo.matrix);
-//
-//				if (a_player == 0) {
-//					D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
-//				}
-//				else {
-//					D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
-//				}
-//				D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
-//				D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
-//
-//				Engine::instance()->addRender(tempinfo);
-//			}
-//
-//		}
-//	}
-//}
-//
+
+void TetrisGame::DrawQueue() {
+	D3DXMATRIX translation, scaling;
+	renInfo tempinfo;
+	tempinfo.type = screenSprite;
+	for (int g = 0; g < tetqueue.size(); ++g) {
+		for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+			// Matrix transformation
+			D3DXMatrixIdentity(&translation);
+			D3DXMatrixIdentity(&scaling);
+			D3DXMatrixIdentity(&tempinfo.matrix);
+			if(tetqueue[g].getBlock(i).getMagic()) {
+				tempinfo.asset = &magicsprite;
+			} else {
+				tempinfo.asset = &bluesprite;
+			}
+			//
+			D3DXMatrixTranslation(&translation,(tetqueue[g].getBlock(i).getPos().x*((spriteStruct*)tempinfo.asset)->rec.right)+200,tetqueue[g].getBlock(i).getPos().y*((spriteStruct*)tempinfo.asset)->rec.bottom+(g*100),0);
+			D3DXMatrixScaling(&scaling,1,1,1);
+			D3DXMatrixMultiply(&tempinfo.matrix,&scaling,&translation);
+			Engine::instance()->addRender(tempinfo);
+		}
+	}
+}
 
 
