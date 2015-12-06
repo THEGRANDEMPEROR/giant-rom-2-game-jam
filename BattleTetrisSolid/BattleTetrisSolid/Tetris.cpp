@@ -98,6 +98,14 @@ void Tetris::Init() {
 	orangesprite.rec.bottom = orangesprite.image->texInfo.Height;
 	orangesprite.color = 0xFFFFFFFF;
 	orangesprite.center = D3DXVECTOR3(orangesprite.image->texInfo.Width / 2.0f, orangesprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the purple sprite
+	purplesprite.image = (imageAsset*)Engine::instance()->getResource("element_purple_square.png", image)->resource;
+	purplesprite.rec.top = 0;
+	purplesprite.rec.left = 0;
+	purplesprite.rec.right = purplesprite.image->texInfo.Width;
+	purplesprite.rec.bottom = purplesprite.image->texInfo.Height;
+	purplesprite.color = 0xFFFFFFFF;
+	purplesprite.center = D3DXVECTOR3(purplesprite.image->texInfo.Width / 2.0f, purplesprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the red sprite
 	redsprite.image = (imageAsset*)Engine::instance()->getResource("element_red_square.png", image)->resource;
 	redsprite.rec.top = 0;
@@ -161,11 +169,9 @@ bool Tetris::curTetMagic() {
 	return curtet.isMagic();
 }
 
-<<<<<<< HEAD
-void Tetris::Update(int a_speed) {
-=======
-void Tetris::Update(int a_controller, int a_speed, PlayerEffect curEffect) {
->>>>>>> origin/master
+
+void Tetris::Update(int a_speed, PlayerEffect curEffect) {
+
 	//int random = 0;
 	//int random1 = 0;
 	//if (Engine::instance()->getBind("Player 1 A")) {
@@ -174,80 +180,118 @@ void Tetris::Update(int a_controller, int a_speed, PlayerEffect curEffect) {
 	//	field[random][random1].setStuff(BLOCK);
 	//}
 	float tempYChange = 0.0f;
-	if (controller == 1) { // gamepad 1
+	if (controller == 0) {
 		Engine::instance()->setRepeat(0.05f);
-		if (Engine::instance()->getFlags("Player 1 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
+		if (Engine::instance()->getFlags("Key Down")&buttonFlags::_repeat&&curEffect != noDrop) {
 			tempYChange += 1.0f;
 		}
-		if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Key Right")&buttonFlags::_pushed) {
 			TryToMove(1, 0);
 		}
-		if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_held) {
+		if (Engine::instance()->getFlags("Key Right")&buttonFlags::_held) {
 			timeheld += Engine::instance()->dt();
 			if (timeheld >= timetogofastsideways) {
-				if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("Key Right")&buttonFlags::_repeat) {
 					TryToMove(1, 0);
 				}
 			}
 		}
-		else if (Engine::instance()->getFlags("Player 1 Right DPAD")&buttonFlags::_released)
+		else if (Engine::instance()->getFlags("Key Right")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Key Left")&buttonFlags::_pushed) {
 			TryToMove(-1, 0);
 		}
-		if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_held) {
+		if (Engine::instance()->getFlags("Key Left")&buttonFlags::_held) {
 			timeheld += Engine::instance()->dt();
 			if (timeheld >= timetogofastsideways) {
-				if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("Key Left")&buttonFlags::_repeat) {
 					TryToMove(-1, 0);
 				}
 			}
 		}
-		else if (Engine::instance()->getFlags("Player 1 Left DPAD")&buttonFlags::_released)
+		else if (Engine::instance()->getFlags("Key Left")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 1 A")&buttonFlags::_pushed&&curEffect != noRot) {
+		if (Engine::instance()->getFlags("Key A")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(true);
 		}
-		if (Engine::instance()->getFlags("Player 1 B")&buttonFlags::_pushed&&curEffect != noRot) {
+		if (Engine::instance()->getFlags("Key B")&buttonFlags::_pushed&&curEffect != noRot) {
+			Rotate(false);
+		}
+	}
+	else if (controller == 1) { // gamepad 1
+		Engine::instance()->setRepeat(0.05f);
+		if (Engine::instance()->getFlags("Pad 1 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
+			tempYChange += 1.0f;
+		}
+		if (Engine::instance()->getFlags("Pad 1 Right DPAD")&buttonFlags::_pushed) {
+			TryToMove(1, 0);
+		}
+		if (Engine::instance()->getFlags("Pad 1 Right DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Pad 1 Right DPAD")&buttonFlags::_repeat) {
+					TryToMove(1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Pad 1 Right DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Pad 1 Left DPAD")&buttonFlags::_pushed) {
+			TryToMove(-1, 0);
+		}
+		if (Engine::instance()->getFlags("Pad 1 Left DPAD")&buttonFlags::_held) {
+			timeheld += Engine::instance()->dt();
+			if (timeheld >= timetogofastsideways) {
+				if (Engine::instance()->getFlags("Pad 1 Left DPAD")&buttonFlags::_repeat) {
+					TryToMove(-1, 0);
+				}
+			}
+		}
+		else if (Engine::instance()->getFlags("Pad 1 Left DPAD")&buttonFlags::_released)
+			timeheld = 0;
+		if (Engine::instance()->getFlags("Pad 1 A")&buttonFlags::_pushed&&curEffect != noRot) {
+			Rotate(true);
+		}
+		if (Engine::instance()->getFlags("Pad 1 B")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(false);
 		}
 
 	}
 	else if (controller == 2) { // gamepad 2
 		Engine::instance()->setRepeat(0.05f);
-		if (Engine::instance()->getFlags("Player 2 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
+		if (Engine::instance()->getFlags("Pad 2 Down DPAD")&buttonFlags::_repeat&&curEffect != noDrop) {
 			tempYChange += 1.0f;
 		}
-		if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Pad 2 Right DPAD")&buttonFlags::_pushed) {
 			TryToMove(1, 0);
 		}
-		if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_held) {
+		if (Engine::instance()->getFlags("Pad 2 Right DPAD")&buttonFlags::_held) {
 			timeheld += Engine::instance()->dt();
 			if (timeheld >= timetogofastsideways) {
-				if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("Pad 2 Right DPAD")&buttonFlags::_repeat) {
 					TryToMove(1, 0);
 				}
 			}
 		}
-		else if (Engine::instance()->getFlags("Player 2 Right DPAD")&buttonFlags::_released)
+		else if (Engine::instance()->getFlags("Pad 2 Right DPAD")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_pushed) {
+		if (Engine::instance()->getFlags("Pad 2 Left DPAD")&buttonFlags::_pushed) {
 			TryToMove(-1, 0);
 		}
-		if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_held) {
+		if (Engine::instance()->getFlags("Pad 2 Left DPAD")&buttonFlags::_held) {
 			timeheld += Engine::instance()->dt();
 			if (timeheld >= timetogofastsideways) {
-				if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_repeat) {
+				if (Engine::instance()->getFlags("Pad 2 Left DPAD")&buttonFlags::_repeat) {
 					TryToMove(-1, 0);
 				}
 			}
 		}
-		else if (Engine::instance()->getFlags("Player 2 Left DPAD")&buttonFlags::_released)
+		else if (Engine::instance()->getFlags("Pad 2 Left DPAD")&buttonFlags::_released)
 			timeheld = 0;
-		if (Engine::instance()->getFlags("Player 2 A")&buttonFlags::_pushed&&curEffect != noRot) {
+		if (Engine::instance()->getFlags("Pad 2 A")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(true);
 		}
-		if (Engine::instance()->getFlags("Player 2 B")&buttonFlags::_pushed&&curEffect != noRot) {
+		if (Engine::instance()->getFlags("Pad 2 B")&buttonFlags::_pushed&&curEffect != noRot) {
 			Rotate(false);
 		}
 	}
@@ -267,7 +311,7 @@ void Tetris::Draw(int a_player) {
 
 	renInfo tempinfo;
 	tempinfo.type = screenSprite;
-	tempinfo.asset = &bluesprite; // set it to blue sprite, just in case.
+	tempinfo.asset = &greensprite; // set it to blue sprite, just in case.
 
 	// Draw the whole field of solidified blocks.
 	// Add offsets later
@@ -275,20 +319,22 @@ void Tetris::Draw(int a_player) {
 	for (int x = 0; x < FIELD_SIZE_X; ++x) {
 		for (int y = 0; y < FIELD_SIZE_Y; ++y) {	// for each spot in the field,
 			if (field[x][y].getStuff() != EMPTY) {	// if the spot ISN'T empty
+				tempinfo.type = screenSprite;
 				if (field[x][y].getStuff() == BLOCK) {
-					tempinfo.type = screenSprite;
 					tempinfo.asset = &bluesprite;
-
+				}
+				else
+					tempinfo.asset = &magicsprite;
 					// Matrix transformation
 					D3DXMatrixIdentity(&translation);
 					D3DXMatrixIdentity(&scaling);
 					D3DXMatrixIdentity(&tempinfo.matrix);
 
 					if (a_player == 0) {
-						D3DXMatrixTranslation(&translation, (bluesprite.rec.right*x + xOffsetP1), (bluesprite.rec.bottom*y + yOffsetP1), 0.0f);
+						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffsetP1), 0.0f);
 					}
 					else {
-						D3DXMatrixTranslation(&translation, (bluesprite.rec.right*x + xOffsetP2), (bluesprite.rec.bottom*y + yOffsetP2), 0.0f);
+						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffsetP2), 0.0f);
 					}
 					D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 					D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
@@ -296,60 +342,34 @@ void Tetris::Draw(int a_player) {
 
 
 					Engine::instance()->addRender(tempinfo);
-				}
-				else if (field[x][y].getStuff() == NANO) {
-					tempinfo.type = screenSprite;
-					tempinfo.asset = &magicsprite;
-
-					// Matrix transformation
-					D3DXMatrixIdentity(&translation);
-					D3DXMatrixIdentity(&scaling);
-					D3DXMatrixIdentity(&tempinfo.matrix);
-
-					if (a_player == 0) {
-						D3DXMatrixTranslation(&translation, (magicsprite.rec.right*x + xOffsetP1), (magicsprite.rec.bottom*y + yOffsetP1), 0.0f);
-					}
-					else  {
-						D3DXMatrixTranslation(&translation, (magicsprite.rec.right*x + xOffsetP2), (magicsprite.rec.bottom*y + yOffsetP2), 0.0f);
-					}
-					D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
-					D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
-
-					Engine::instance()->addRender(tempinfo);
-				}
+				
+				
 
 			}
 		}
 	}
 
 	for (int i = 0; i < TETRIMINO_SIZE; ++i) {
-		if (!curtet.getBlock(i).getMagic()) {
-			tempinfo.type = screenSprite;
-			tempinfo.asset = &bluesprite;
-
-			// Matrix transformation
-			D3DXMatrixIdentity(&translation);
-			D3DXMatrixIdentity(&scaling);
-			D3DXMatrixIdentity(&tempinfo.matrix);
-
-			if (a_player == 0) {
-				D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
-			}
-			else {
-				D3DXMatrixTranslation(&translation, (bluesprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (bluesprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
-			}
-			D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
-			D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
-
-			Engine::instance()->addRender(tempinfo);
-
-
-
-
-		}
-		else {
-			tempinfo.type = screenSprite;
+		tempinfo.type = screenSprite;
+		if (curtet.getBlock(i).getMagic()) {
 			tempinfo.asset = &magicsprite;
+		}
+		else if (curtet.getType() == LINE)
+			tempinfo.asset = &bluesprite;
+		else if (curtet.getType() == JPIECE)
+			tempinfo.asset = &darkbluesprite;
+		else if (curtet.getType() == LPIECE)
+			tempinfo.asset = &orangesprite;
+		else if (curtet.getType() == SQUARE)
+			tempinfo.asset = &yellowsprite;
+		else if (curtet.getType() == SPIECE)
+			tempinfo.asset = &greensprite;
+		else if (curtet.getType() == TPIECE)
+			tempinfo.asset = &purplesprite;
+		else if (curtet.getType() == ZPIECE)
+			tempinfo.asset = &redsprite;
+		else
+			tempinfo.asset = &greysprite;
 
 			// Matrix transformation
 			D3DXMatrixIdentity(&translation);
@@ -357,16 +377,20 @@ void Tetris::Draw(int a_player) {
 			D3DXMatrixIdentity(&tempinfo.matrix);
 
 			if (a_player == 0) {
-				D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
+				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
 			}
 			else {
-				D3DXMatrixTranslation(&translation, (magicsprite.rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (magicsprite.rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
+				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
 			}
 			D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 			D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
 
 			Engine::instance()->addRender(tempinfo);
-		}
+
+
+
+
+		
 
 	}
 
@@ -443,7 +467,7 @@ void Tetris::TryToMove(int a_x, float a_y) {
 					curtet.Move(0, 1.0f);
 				}
 			}
-			if (timesliding > timetoslide || Engine::instance()->getBind("Player 1 Down DPAD") && controller == 1 && timesliding > timetoslideholdingdown || Engine::instance()->getBind("Player 2 Down DPAD") && controller == 2 && timesliding > timetoslideholdingdown) {
+			if (timesliding > timetoslide || Engine::instance()->getBind("Pad 1 Down DPAD") && controller == 1 && timesliding > timetoslideholdingdown || Engine::instance()->getBind("Pad 2 Down DPAD") && controller == 2 && timesliding > timetoslideholdingdown) {
 				Solidify();
 				needgarbage = true;
 				timesliding = 0.0f;
@@ -573,7 +597,7 @@ void Tetris::Rotate(bool clockwise) {
 				curtet.SetBlockPos(i, fallingpos(temppos[CENTER_TETRIMINO_BLOCK].x + xChange, curtet.getBlock(i).getPos().y));
 			}
 		}
-		bool outside = DoICollide(0, 0.0f);
+		bool outside = DoICollide(0, roundingthing);
 
 		if (outside) { // change it back if it is outside
 			for (int i = 0; i < TETRIMINO_SIZE; ++i) {
@@ -584,7 +608,29 @@ void Tetris::Rotate(bool clockwise) {
 		curtet.Move(0, roundingthing);
 	}
 	else {// squares
-		if (curtet)
+		if (curtet.isMagic()) {
+			int newmagic = 0;
+			for (int i = 0; i < TETRIMINO_SIZE; ++i) {
+				if (curtet.getBlock(i).getMagic()) {
+					newmagic = i;
+					curtet.SetBlockMagic(i, false);
+				}
+			}
+			if (clockwise) {
+				++newmagic;
+			}
+			else {
+				--newmagic;
+			}
+
+			if (newmagic < 0)
+				newmagic = TETRIMINO_SIZE - 1;
+			else if (newmagic >= TETRIMINO_SIZE) {
+				newmagic = 0;
+			}
+
+			curtet.SetBlockMagic(newmagic, true);
+		}
 
 
 

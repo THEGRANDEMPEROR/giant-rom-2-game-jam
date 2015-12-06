@@ -233,92 +233,78 @@ void Game::init() {
 		}
 	}
 
+
+
+	//two controllers
+	//game pad menu bind
+	Engine::instance()->bind(pad1_LYp, "SelectionUp");
+	Engine::instance()->bind(pad1_LYn, "SelectionDown");
+	Engine::instance()->bind(pad1_UP, "SelectionUpDpad");
+	Engine::instance()->bind(pad1_DOWN, "SelectionDownDpad");
+	Engine::instance()->bind(pad1_A, "Accept");
+	//keyboard
+	Engine::instance()->bind(W, "SelectionUp2");
+	Engine::instance()->bind(S, "SelectionDown2");
+	Engine::instance()->bind(SPACE, "Accept2");
+
+	// Keyboard
+	Engine::instance()->bind(RIGHT, "Key Right");
+	Engine::instance()->bind(UP, "Key Up");
+	Engine::instance()->bind(LEFT, "Key Left");
+	Engine::instance()->bind(DOWN, "Key Down");
+	Engine::instance()->bind(Z, "Key A");
+	Engine::instance()->bind(X, "Key B");
+	Engine::instance()->bind(A, "Key X");
+	Engine::instance()->bind(S, "Key Y");
+	Engine::instance()->bind(RETURN, "Key Start");
+	Engine::instance()->bind(BACK, "Key Back");
+	// Pad 1
+	Engine::instance()->bind(pad1_RIGHT, "Pad 1 Right DPAD");
+	Engine::instance()->bind(pad1_UP, "Pad 1 Up DPAD");
+	Engine::instance()->bind(pad1_LEFT, "Pad 1 Left DPAD");
+	Engine::instance()->bind(pad1_DOWN, "Pad 1 Down DPAD");
+	Engine::instance()->bind(pad1_A, "Pad 1 A");
+	Engine::instance()->bind(pad1_B, "Pad 1 B");
+	Engine::instance()->bind(pad1_X, "Pad 1 X");
+	Engine::instance()->bind(pad1_Y, "Pad 1 Y");
+	Engine::instance()->bind(pad1_START, "Pad 1 Start");
+	Engine::instance()->bind(pad1_BACK, "Pad 1 Back");
+
+
 	//bind types
 	if(numControllers > 1) {
-		//two controllers
-		//game pad menu bind
-		Engine::instance()->bind(pad1_LYp,"SelectionUp");
-		Engine::instance()->bind(pad1_LYn,"SelectionDown");
-		Engine::instance()->bind(pad1_UP, "SelectionUpDpad");
-		Engine::instance()->bind(pad1_DOWN, "SelectionDownDpad");
-		Engine::instance()->bind(pad1_A,"Accept");
-		//keyboard
-		Engine::instance()->bind(W,"SelectionUp");
-		Engine::instance()->bind(S,"SelectionDown");
-		Engine::instance()->bind(SPACE,"Accept");
 		//p2 character select
-		Engine::instance()->bind(pad2_LYp,"SelectionUp2");
-		Engine::instance()->bind(pad2_LYn,"SelectionDown2");
+		Engine::instance()->bind(pad2_LYp, "SelectionUp2");
+		Engine::instance()->bind(pad2_LYn, "SelectionDown2");
 		Engine::instance()->bind(pad2_UP, "SelectionUp2Dpad");
 		Engine::instance()->bind(pad2_DOWN, "SelectionDown2Dpad");
-		Engine::instance()->bind(pad2_A,"Accept2");
+		Engine::instance()->bind(pad2_A, "Accept2");
+
+
+		// Pad 2
+		Engine::instance()->bind(pad2_RIGHT, "Pad 2 Right DPAD");
+		Engine::instance()->bind(pad2_UP, "Pad 2 Up DPAD");
+		Engine::instance()->bind(pad2_LEFT, "Pad 2 Left DPAD");
+		Engine::instance()->bind(pad2_DOWN, "Pad 2 Down DPAD");
+		Engine::instance()->bind(pad2_A, "Pad 2 A");
+		Engine::instance()->bind(pad2_B, "Pad 2 B");
+		Engine::instance()->bind(pad2_X, "Pad 2 X");
+		Engine::instance()->bind(pad2_Y, "Pad 2 Y");
+		Engine::instance()->bind(pad2_START, "Pad 2 Start");
+		Engine::instance()->bind(pad2_BACK, "Pad 2 Back");
+
+
+
 
 		// player 1 gamepad 1
 		tetris.BindPlayer(0, 1); // first player. gamepads are 1-4 so first gamepad.
 		// player 2 gamepad 2
 		tetris.BindPlayer(1, 2); // second player. gamepads are 1-4 so second gamepad.
-		// player 1
-		Engine::instance()->bind(pad1_RIGHT, "Player 1 Right DPAD");
-		Engine::instance()->bind(pad1_UP, "Player 1 Up DPAD");
-		Engine::instance()->bind(pad1_LEFT, "Player 1 Left DPAD");
-		Engine::instance()->bind(pad1_DOWN, "Player 1 Down DPAD");
-		Engine::instance()->bind(pad1_A, "Player 1 A");
-		Engine::instance()->bind(pad1_B, "Player 1 B");
-		Engine::instance()->bind(pad1_X, "Player 1 X");
-		Engine::instance()->bind(pad1_Y, "Player 1 Y");
-		Engine::instance()->bind(pad1_START, "Player 1 Start");
-		Engine::instance()->bind(pad1_BACK, "Player 1 Back");
-		// player 2
-		Engine::instance()->bind(pad2_RIGHT, "Player 2 Right DPAD");
-		Engine::instance()->bind(pad2_UP, "Player 2 Up DPAD");
-		Engine::instance()->bind(pad2_LEFT, "Player 2 Left DPAD");
-		Engine::instance()->bind(pad2_DOWN, "Player 2 Down DPAD");
-		Engine::instance()->bind(pad2_A, "Player 2 A");
-		Engine::instance()->bind(pad2_B, "Player 2 B");
-		Engine::instance()->bind(pad2_X, "Player 2 X");
-		Engine::instance()->bind(pad2_Y, "Player 2 Y");
-		Engine::instance()->bind(pad2_START, "Player 2 Start");
-		Engine::instance()->bind(pad2_BACK, "Player 2 Back");
 	} else {
-		//one controller
-		//keyboard
-		Engine::instance()->bind(W,"SelectionUp");
-		Engine::instance()->bind(S,"SelectionDown");
-		Engine::instance()->bind(SPACE,"Accept");
-		//p2 character select
-		Engine::instance()->bind(pad1_LYp,"SelectionUp2");
-		Engine::instance()->bind(pad1_LYn,"SelectionDown2");
-		Engine::instance()->bind(pad1_UP, "SelectionUp2Dpad");
-		Engine::instance()->bind(pad1_DOWN, "SelectionDown2Dpad");
-		Engine::instance()->bind(pad1_A,"Accept2");
-
 		// player 1 keyboard
 		tetris.BindPlayer(0, 0); // first player. keyboard is 0.
-		// player 2 gamepad 2
+		// player 2 gamepad 1
 		tetris.BindPlayer(1, 1); // second player. gamepads are 1-4 so first gamepad.
-		// player 1
-		//TODO FIGURE OUT WHAT TO MAKE THESE
-		Engine::instance()->bind(D, "Player 1 Right DPAD");
-		Engine::instance()->bind(W, "Player 1 Up DPAD");
-		Engine::instance()->bind(A, "Player 1 Left DPAD");
-		Engine::instance()->bind(S, "Player 1 Down DPAD");
-		Engine::instance()->bind(K, "Player 1 A");
-		Engine::instance()->bind(L, "Player 1 B");
-		Engine::instance()->bind(J, "Player 1 X");
-		Engine::instance()->bind(I, "Player 1 Y");
-		Engine::instance()->bind(RETURN, "Player 1 Start");
-		Engine::instance()->bind(BACK, "Player 1 Back");
-		// player 2
-		Engine::instance()->bind(pad1_RIGHT, "Player 2 Right DPAD");
-		Engine::instance()->bind(pad1_UP, "Player 2 Up DPAD");
-		Engine::instance()->bind(pad1_LEFT, "Player 2 Left DPAD");
-		Engine::instance()->bind(pad1_DOWN, "Player 2 Down DPAD");
-		Engine::instance()->bind(pad1_A, "Player 2 A");
-		Engine::instance()->bind(pad1_B, "Player 2 B");
-		Engine::instance()->bind(pad1_X, "Player 2 X");
-		Engine::instance()->bind(pad1_Y, "Player 2 Y");
-		Engine::instance()->bind(pad1_START, "Player 2 Start");
-		Engine::instance()->bind(pad1_BACK, "Player 2 Back");
 	}
 }
 

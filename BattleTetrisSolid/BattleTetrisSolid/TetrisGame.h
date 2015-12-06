@@ -106,11 +106,11 @@ public:
 	void Update();
 	void Draw();
 	void BindPlayer(int a_player, int a_controller); // 0 keyboard. 1-4 gamepads.
-<<<<<<< HEAD
+
 	void Reset(bool a_magic, bool a_rensa);
 	void fillQueue(TetriminoType fill,bool hasMagic,int number);
-=======
+
 	void Reset(bool a_magic, bool a_rensa, bool a_winsreset);
->>>>>>> origin/master
+
 	void setMagic(int player,int level,void (*func)(Player*,Player*));
 };

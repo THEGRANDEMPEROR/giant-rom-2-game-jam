@@ -59,7 +59,7 @@ private:
 	int linestosend;
 	int numlines;
 	int speed;
-	int controller;
+	int controller; // 0 is keyboard, 1-4 gamepads
 	float timeheld;
 	float timesliding;
 	bool iNeedATetrimino;
@@ -92,11 +92,9 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
-<<<<<<< HEAD
-	void Update(int a_speed);
-=======
-	void Update(int a_controller, int a_speed,PlayerEffect effect);
->>>>>>> origin/master
+
+	void Update(int a_speed,PlayerEffect effect);
+
 	void Draw(int a_player);
 	void Reset(int a_controller);
 	void setPiece(Tetrimino& piece);
@@ -106,13 +104,11 @@ public:
 	bool needGarbage();
 	void Solidify();
 	int LinesToSend();
-<<<<<<< HEAD
-	void setLinesToSend(int toSend) {linestosend = toSend;}
 	TetriminoType curType();
 	bool curTetMagic();
-=======
+
 	void setLinesToSend(int a_lines);
->>>>>>> origin/master
+
 	//gets the amount of magic to add to player
 	int getMagic(){return magic;}
 	//sets magic to 0

@@ -32,11 +32,9 @@ void Player::Init(int a_player) {
 
 void Player::Update(int a_speed) {
 	// draw character?
-<<<<<<< HEAD
-	tetris.Update(a_speed);
-=======
-	tetris.Update(controller, a_speed, curEffect);
->>>>>>> origin/master
+
+	tetris.Update(a_speed, curEffect);
+
 	magic += tetris.getMagic();
 	if(magic > maxMagic) {
 		magic = maxMagic;
@@ -63,7 +61,7 @@ void Player::setMagic(int level, void (*func)(Player*,Player*)) {
 void Player::useMagic(Player* otherPlayer) {
 	if(!isUsingMagic()&&!isBlocked()) {
 		if(controller == 0) {
-			if(Engine::instance()->getFlags("Player 1 Up DPAD")&buttonFlags::_pushed) {
+			if(Engine::instance()->getFlags("Pad 1 Up DPAD")&buttonFlags::_pushed) {
 				if(magic >= 4) {
 					abilities[3](this,otherPlayer);
 				} else {
@@ -73,7 +71,7 @@ void Player::useMagic(Player* otherPlayer) {
 				}
 			}
 		} else {
-			if(Engine::instance()->getFlags("Player 2 Up DPAD")&buttonFlags::_pushed) {
+			if(Engine::instance()->getFlags("Pad 2 Up DPAD")&buttonFlags::_pushed) {
 				if(magic >= 4) {
 					abilities[3](this,otherPlayer);
 				} else {
@@ -203,10 +201,10 @@ void TetrisGame::Init() {
 	lockedMagicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
 	lockedMagicsprite.rec.top = 0;
 	lockedMagicsprite.rec.left = 0;
-	lockedMagicsprite.rec.right = magicsprite.image->texInfo.Width;
-	lockedMagicsprite.rec.bottom = magicsprite.image->texInfo.Height;
+	lockedMagicsprite.rec.right = /*lockedM*/magicsprite.image->texInfo.Width;
+	lockedMagicsprite.rec.bottom = /*lockedM*/magicsprite.image->texInfo.Height;
 	lockedMagicsprite.color = 0xFF7F7F7F;
-	lockedMagicsprite.center = D3DXVECTOR3(magicsprite.image->texInfo.Width / 2.0f, magicsprite.image->texInfo.Height / 2.0f, 0);
+	lockedMagicsprite.center = D3DXVECTOR3(/*lockedM*/magicsprite.image->texInfo.Width / 2.0f, /*lockedM*/magicsprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the dark blue sprite
 	darkbluesprite.image = (imageAsset*)Engine::instance()->getResource("element_dark_blue_square.png", image)->resource;
 	darkbluesprite.rec.top = 0;
@@ -239,6 +237,14 @@ void TetrisGame::Init() {
 	orangesprite.rec.bottom = orangesprite.image->texInfo.Height;
 	orangesprite.color = 0xFFFFFFFF;
 	orangesprite.center = D3DXVECTOR3(orangesprite.image->texInfo.Width / 2.0f, orangesprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the purple sprite
+	purplesprite.image = (imageAsset*)Engine::instance()->getResource("element_purple_square.png", image)->resource;
+	purplesprite.rec.top = 0;
+	purplesprite.rec.left = 0;
+	purplesprite.rec.right = purplesprite.image->texInfo.Width;
+	purplesprite.rec.bottom = purplesprite.image->texInfo.Height;
+	purplesprite.color = 0xFFFFFFFF;
+	purplesprite.center = D3DXVECTOR3(purplesprite.image->texInfo.Width / 2.0f, purplesprite.image->texInfo.Height / 2.0f, 0);	
 	// Initialize the red sprite
 	redsprite.image = (imageAsset*)Engine::instance()->getResource("element_red_square.png", image)->resource;
 	redsprite.rec.top = 0;
@@ -423,7 +429,22 @@ void TetrisGame::DrawQueue() {
 			if(tetqueue[g].getBlock(i).getMagic()) {
 				tempinfo.asset = &magicsprite;
 			} else {
-				tempinfo.asset = &bluesprite;
+				if (tetqueue[g].getType() == LINE)
+					tempinfo.asset = &bluesprite;
+				else if (tetqueue[g].getType() == JPIECE)
+					tempinfo.asset = &darkbluesprite;
+				else if (tetqueue[g].getType() == LPIECE)
+					tempinfo.asset = &orangesprite;
+				else if (tetqueue[g].getType() == SQUARE)
+					tempinfo.asset = &yellowsprite;
+				else if (tetqueue[g].getType() == SPIECE)
+					tempinfo.asset = &greensprite;
+				else if (tetqueue[g].getType() == TPIECE)
+					tempinfo.asset = &purplesprite;
+				else if (tetqueue[g].getType() == ZPIECE)
+					tempinfo.asset = &redsprite;
+				else
+					tempinfo.asset = &greysprite;
 			}
 			//
 			D3DXMatrixTranslation(&translation,(tetqueue[g].getBlock(i).getPos().x*((spriteStruct*)tempinfo.asset)->rec.right)+(Engine::instance()->width()/2)-(((spriteStruct*)tempinfo.asset)->rec.right*4), tetqueue[g].getBlock(i).getPos().y*((spriteStruct*)tempinfo.asset)->rec.bottom+(g*100)+((spriteStruct*)tempinfo.asset)->rec.bottom,0);
