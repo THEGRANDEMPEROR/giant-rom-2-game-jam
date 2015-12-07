@@ -187,7 +187,7 @@ void Game::init() {
 	tempChar.icon.color = 0xFFFFFFFF;
 
 	//Drew Scanlon
-	tempChar.name = "Drew Scanlon";
+	tempChar.name = "Solid Scanlon";
 	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
@@ -198,14 +198,18 @@ void Game::init() {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = grenade;
+	tempChar.aName[0] = "Grenade";
 	tempChar.abilities[1] = goodPosture;
+	tempChar.aName[1] = "Good Posture";
 	tempChar.abilities[2] = scalonSpecial;
+	tempChar.aName[2] = "The Scanlon Special";
 	tempChar.abilities[3] = tricaster;
+	tempChar.aName[3] = "Tricaster Master";
 
 	charList.push_back(tempChar);
 
 	//Dan Ryckert
-	tempChar.name = "Dan Ryckert";
+	tempChar.name = "Dirty Dan Ryckert";
 	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DanRyckert.jpg",image)->resource;
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
@@ -216,9 +220,13 @@ void Game::init() {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = powBlock;
+	tempChar.aName[0] = "Pow Block";
 	tempChar.abilities[1] = dmx;
+	tempChar.aName[1] = "DMX Goomba";
 	tempChar.abilities[2] = marioParty;
+	tempChar.aName[2] = "Mario Party Party";
 	tempChar.abilities[3] = yellowRussian;
+	tempChar.aName[3] = "Yellow Russian";
 
 	charList.push_back(tempChar);
 
@@ -233,9 +241,13 @@ void Game::init() {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = fulton;
+	tempChar.aName[0] = "Fulton";
 	tempChar.abilities[1] = cardboardBox;
+	tempChar.aName[1] = "Cardboard Box";
 	tempChar.abilities[2] = tookSoLong;
+	tempChar.aName[2] = "What took you so long?";
 	tempChar.abilities[3] = gop;
+	tempChar.aName[3] = "Guns of the Patriots";
 
 	charList.push_back(tempChar);
 	Engine::instance()->setRepeat(0.2f);

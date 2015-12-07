@@ -77,6 +77,16 @@ private:
 	spriteStruct redsprite;
 	spriteStruct yellowsprite;
 
+	// sound stuff
+	soundStruct bump;
+	soundStruct rotateclockwise;
+	soundStruct rotatecclockwise;
+	soundStruct solidify;
+	soundStruct yayline;
+	soundStruct yaytetris;
+	soundStruct youwin;
+	vector soundvec;
+
 	// stupid draw stuff
 	int xOffsetP1;
 	int yOffset;

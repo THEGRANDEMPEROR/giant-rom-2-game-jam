@@ -22,6 +22,7 @@ struct CharacterInfo {
 	spriteStruct selectBackground;
 	spriteStruct victoryBackground;
 	void (*abilities[4])(Player*,Player*);
+	std::string aName[4];
 };
 
 class Game {
@@ -51,6 +52,8 @@ private:
 	int p2Select;
 	textStruct p1Name;
 	textStruct p2Name;
+	textStruct p1Power[4];
+	textStruct p2Power[4];
 	D3DXMATRIX charTrans;
 
 	//game setting
