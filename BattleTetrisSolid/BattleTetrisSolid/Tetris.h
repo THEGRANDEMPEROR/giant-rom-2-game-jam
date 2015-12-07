@@ -109,6 +109,7 @@ public:
 	void clearBottom(int linesToClear);
 	void clearTop(int linesToClear);
 	bool isEmpty(int line);
+	void clearRandom(int numToClear);
 
 	void setLinesToSend(int a_lines);
 

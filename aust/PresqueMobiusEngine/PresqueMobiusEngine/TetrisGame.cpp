@@ -26,12 +26,15 @@ void Player::Init(int a_player) {
 	effectLength = 0;
 	magicRunning = 0;
 	maxMagic = 20;
+	
 }
 
 
 void Player::Update(int a_speed) {
 	// draw character?
-	tetris.Update(controller, a_speed, curEffect);
+
+	tetris.Update(a_speed, curEffect);
+
 	magic += tetris.getMagic();
 	if(magic > maxMagic) {
 		magic = maxMagic;
@@ -57,8 +60,8 @@ void Player::setMagic(int level, void (*func)(Player*,Player*)) {
 
 void Player::useMagic(Player* otherPlayer) {
 	if(!isUsingMagic()&&!isBlocked()) {
-		if(controller == 0) {
-			if(Engine::instance()->getFlags("Player 1 Up DPAD")&buttonFlags::_pushed) {
+		if(controller == 1) {
+			if(Engine::instance()->getFlags("Pad 1 Up DPAD")&buttonFlags::_pushed) {
 				if(magic >= 4) {
 					abilities[3](this,otherPlayer);
 				} else {
@@ -67,8 +70,18 @@ void Player::useMagic(Player* otherPlayer) {
 					}
 				}
 			}
-		} else {
-			if(Engine::instance()->getFlags("Player 2 Up DPAD")&buttonFlags::_pushed) {
+		} else if(controller == 2){
+			if(Engine::instance()->getFlags("Pad 2 Up DPAD")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
+					}
+				}
+			}
+		} else if(controller == 0) {
+			if(Engine::instance()->getFlags("Key Up")&buttonFlags::_pushed) {
 				if(magic >= 4) {
 					abilities[3](this,otherPlayer);
 				} else {
@@ -92,7 +105,7 @@ void Player::Reset() {
 	effectLength = 0;
 	magic = 0;
 	magicRunning = 0;
-	tetris.Reset();
+	tetris.Reset(controller);
 }
 
 bool Player::needPiece() {
@@ -125,6 +138,33 @@ void Player::setUsingMagic(float timeUsingMagic) {
 	magicRunning = timeUsingMagic;
 }
 
+
+int Player::LinesToSend() {
+	return tetris.LinesToSend();
+}
+
+
+void Player::setLinesToSend(int a_lines) {
+	tetris.setLinesToSend(a_lines);
+}
+
+
+void Player::addGarbage(int a_lines) {
+	tetris.addGarbage(a_lines);
+}
+
+
+// returns true if they are about to solidify, and need some garbage lines.
+bool Player::needGarbage() {
+	return tetris.needGarbage();
+}
+
+
+bool Player::Living() {
+	return tetris.Living();
+}
+
+
 TetrisGame::TetrisGame() {
 
 }
@@ -143,6 +183,9 @@ void TetrisGame::Init() {
 	speed = 0;
 	speedtime = 0.0f;
 	//moved binds to game.cpp
+
+	p1wins = 0;
+	p2wins = 0;
 
 	rensa = false; // default off
 	magic = true; // default on
@@ -168,10 +211,10 @@ void TetrisGame::Init() {
 	lockedMagicsprite.image = (imageAsset*)Engine::instance()->getResource("element_bomb_square.png", image)->resource;
 	lockedMagicsprite.rec.top = 0;
 	lockedMagicsprite.rec.left = 0;
-	lockedMagicsprite.rec.right = magicsprite.image->texInfo.Width;
-	lockedMagicsprite.rec.bottom = magicsprite.image->texInfo.Height;
+	lockedMagicsprite.rec.right = /*lockedM*/magicsprite.image->texInfo.Width;
+	lockedMagicsprite.rec.bottom = /*lockedM*/magicsprite.image->texInfo.Height;
 	lockedMagicsprite.color = 0xFF7F7F7F;
-	lockedMagicsprite.center = D3DXVECTOR3(magicsprite.image->texInfo.Width / 2.0f, magicsprite.image->texInfo.Height / 2.0f, 0);
+	lockedMagicsprite.center = D3DXVECTOR3(/*lockedM*/magicsprite.image->texInfo.Width / 2.0f, /*lockedM*/magicsprite.image->texInfo.Height / 2.0f, 0);
 	// Initialize the dark blue sprite
 	darkbluesprite.image = (imageAsset*)Engine::instance()->getResource("element_dark_blue_square.png", image)->resource;
 	darkbluesprite.rec.top = 0;
@@ -204,6 +247,14 @@ void TetrisGame::Init() {
 	orangesprite.rec.bottom = orangesprite.image->texInfo.Height;
 	orangesprite.color = 0xFFFFFFFF;
 	orangesprite.center = D3DXVECTOR3(orangesprite.image->texInfo.Width / 2.0f, orangesprite.image->texInfo.Height / 2.0f, 0);
+	// Initialize the purple sprite
+	purplesprite.image = (imageAsset*)Engine::instance()->getResource("element_purple_square.png", image)->resource;
+	purplesprite.rec.top = 0;
+	purplesprite.rec.left = 0;
+	purplesprite.rec.right = purplesprite.image->texInfo.Width;
+	purplesprite.rec.bottom = purplesprite.image->texInfo.Height;
+	purplesprite.color = 0xFFFFFFFF;
+	purplesprite.center = D3DXVECTOR3(purplesprite.image->texInfo.Width / 2.0f, purplesprite.image->texInfo.Height / 2.0f, 0);	
 	// Initialize the red sprite
 	redsprite.image = (imageAsset*)Engine::instance()->getResource("element_red_square.png", image)->resource;
 	redsprite.rec.top = 0;
@@ -249,6 +300,20 @@ void TetrisGame::Update() {
 				tetqueue.push_back(randomTet());
 			}
 		}
+
+		CancelOutLines();
+		// send garbage if they just solidified a piece.
+		if (players[0].needGarbage()) {
+			players[0].addGarbage(players[1].LinesToSend());
+			players[1].setLinesToSend(0);
+		}
+		if (players[1].needGarbage()) {
+			players[1].addGarbage(players[0].LinesToSend());
+			players[0].setLinesToSend(0);
+		}
+
+
+		
 		speedtime += Engine::instance()->dt();
 		if(speedtime >= TIMETOSPEEDUP) {
 			if(speed < MAXSPEED) {
@@ -256,6 +321,30 @@ void TetrisGame::Update() {
 			}
 			speedtime = 0;
 		}
+
+
+
+		// make sure this is at the end
+		// Add an animation section probably, not sure how you did that for other states sad aust ANTIMATIONS SON
+		if (!players[0].Living()) { // player 1 loss, player 2 wins
+			p2wins++;
+			if (p2wins < MAXWINS) // p2 doesn't win yet
+				Reset(magic, rensa, false);
+			else {
+				Reset(magic, rensa, true); // MOVE THIS I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
+				// move to the Rematch, charselect, main menu screen
+			}
+		}
+		if (!players[1].Living()) { // player 2 loss, player 1 wins
+			p1wins++;
+			if (p1wins < MAXWINS) // p1 doesn't win yet
+				Reset(magic, rensa, false);
+			else {
+				Reset(magic, rensa, true); // MOVE THIS, I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
+				// move to the Rematch, charselect, main menu screen
+			}
+		}
+		
 	}
 }
 
@@ -289,7 +378,7 @@ void TetrisGame::BindPlayer(int a_player, int a_controller) { // 0 keyboard. 1-4
 
 
 
-void TetrisGame::Reset(bool a_magic, bool a_rensa) {
+void TetrisGame::Reset(bool a_magic, bool a_rensa, bool a_winsreset) {
 	for (int i = 0; i < NUMPLAYERS; ++i) {
 		players[i].Reset();
 	}
@@ -297,6 +386,10 @@ void TetrisGame::Reset(bool a_magic, bool a_rensa) {
 	rensa = a_rensa;
 	speed = 0;
 	speedtime = 0.0f;
+	if (a_winsreset) {
+		p1wins = 0;
+		p2wins = 0;
+	}
 }
 
 
@@ -346,7 +439,22 @@ void TetrisGame::DrawQueue() {
 			if(tetqueue[g].getBlock(i).getMagic()) {
 				tempinfo.asset = &magicsprite;
 			} else {
-				tempinfo.asset = &bluesprite;
+				if (tetqueue[g].getType() == LINE)
+					tempinfo.asset = &bluesprite;
+				else if (tetqueue[g].getType() == JPIECE)
+					tempinfo.asset = &darkbluesprite;
+				else if (tetqueue[g].getType() == LPIECE)
+					tempinfo.asset = &orangesprite;
+				else if (tetqueue[g].getType() == SQUARE)
+					tempinfo.asset = &yellowsprite;
+				else if (tetqueue[g].getType() == SPIECE)
+					tempinfo.asset = &greensprite;
+				else if (tetqueue[g].getType() == TPIECE)
+					tempinfo.asset = &purplesprite;
+				else if (tetqueue[g].getType() == ZPIECE)
+					tempinfo.asset = &redsprite;
+				else
+					tempinfo.asset = &greysprite;
 			}
 			//
 			D3DXMatrixTranslation(&translation,(tetqueue[g].getBlock(i).getPos().x*((spriteStruct*)tempinfo.asset)->rec.right)+(Engine::instance()->width()/2)-(((spriteStruct*)tempinfo.asset)->rec.right*4), tetqueue[g].getBlock(i).getPos().y*((spriteStruct*)tempinfo.asset)->rec.bottom+(g*100)+((spriteStruct*)tempinfo.asset)->rec.bottom,0);
@@ -356,6 +464,24 @@ void TetrisGame::DrawQueue() {
 		}
 	}
 }
+
+
+void TetrisGame::CancelOutLines() {
+	int temp1 = players[0].LinesToSend();
+	int temp2 = players[1].LinesToSend();
+	temp1 -= temp2;
+	temp2 -= players[0].LinesToSend();
+	if (temp1 < 0)
+		temp1 = 0;
+	if (temp2 < 0)
+		temp2 = 0;
+	players[0].setLinesToSend(temp1);
+	players[1].setLinesToSend(temp2);
+
+
+}
+
+
 
 void TetrisGame::setMagic(int player, int level, void (*func)(Player*,Player*)) {
 	players[player].setMagic(level,func);

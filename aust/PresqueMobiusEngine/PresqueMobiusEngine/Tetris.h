@@ -13,6 +13,8 @@ const int DEATHZONE = 2; // top two rows equals death if you solidify there.
 
 const float speedmultiplier = 0.3f;
 const float timetogofastsideways = 0.25f; // The time it takes for it to quickly move sideways while holding either direction
+const float timetoslide = 0.5f;
+const float timetoslideholdingdown = 0.1f;
 
 const int xOffsetP1 = 128;
 const int yOffsetP1 = 32;
@@ -20,6 +22,7 @@ const int yOffsetP1 = 32;
 const int xOffsetP2 = 768;
 const int yOffsetP2 = 32;
 
+const int SAMECOLUMNGARBAGECHANCE = 2;
 
 enum PlayerEffect;
 
@@ -56,8 +59,12 @@ private:
 	int linestosend;
 	int numlines;
 	int speed;
+	int controller; // 0 is keyboard, 1-4 gamepads
 	float timeheld;
+	float timesliding;
 	bool iNeedATetrimino;
+	bool needgarbage;
+	bool alive;
 	Tetrimino curtet;
 	spriteStruct bluesprite;
 	spriteStruct magicsprite;
@@ -75,27 +82,45 @@ private:
 	int checkAllLines();
 	void removeLine(int a_line);
 	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
+	// for use after being pushed up. Deathzone should always be empty
+	void ClearDeathZone();
+	
+	
 	int magic;
+	
 public:
 	Tetris();
 	~Tetris();
 	void Init();
-	void Update(int a_controller, int a_speed,PlayerEffect effect);
+
+	void Update(int a_speed,PlayerEffect effect);
+
 	void Draw(int a_player);
-	void Reset();
+	void Reset(int a_controller);
 	void setPiece(Tetrimino& piece);
 	void transformMagic();
-	
+
 	bool needPiece();
+	bool needGarbage();
 	void Solidify();
 	int LinesToSend();
-	void setLinesToSend(int toSend) {linestosend = toSend;}
 	TetriminoType curType();
 	bool curTetMagic();
+	void clearBottom(int linesToClear);
+	void clearTop(int linesToClear);
+	bool isEmpty(int line);
+	void clearRandom(int numToClear);
+
+	void setLinesToSend(int a_lines);
+
 	//gets the amount of magic to add to player
 	int getMagic(){return magic;}
 	//sets magic to 0
 	void clearMagic(){magic = 0;}
+	// adds garbage lines at the bottom
+	void addGarbage(int a_garbage);
+	// returns true if alive
+	bool Living();
 };
 
 

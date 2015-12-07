@@ -743,3 +743,28 @@ void Tetris::clearTop(int linesToClear) {
 		}
 	}
 }
+
+void Tetris::clearRandom(int num) {
+	std::vector<pos> loc;
+	pos temp;
+	for(int x = 0; x < FIELD_SIZE_X; ++x) {
+		for(int y = 0; y < FIELD_SIZE_Y; ++y) {
+			if(field[x][y].getStuff() != EMPTY) {
+				temp.x = x;
+				temp.y = y;
+				loc.push_back(temp);
+			}
+		}
+	}
+	if(loc.size()<num) {
+		num = loc.size();
+	}
+	int ran;
+	while(num > 0) {
+		ran = rand()%num;
+		field[loc[ran].x][loc[ran].y].setStuff(EMPTY);
+		loc.erase(loc.begin()+ran);
+		--num;
+	}
+	loc.empty();
+}

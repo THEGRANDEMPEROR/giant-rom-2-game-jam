@@ -24,7 +24,10 @@ static void goodPosture(Player* start,Player* other) {
 
 //Drew The Scanlon Special
 static void scalonSpecial(Player* start,Player* other) {
-	//destroy 10 blocks at random
+	if(!other->isImmune()) {
+		//destroy 10 blocks at random
+		other->getTetris()->clearRandom(10);
+	}
 	start->subMagic(3);
 }
 
@@ -41,12 +44,16 @@ static void tricaster(Player* start,Player* other) {
 //Dan Pow Block
 static void powBlock(Player* start, Player* other) {
 	//destroy the bottom 3 lines
+	start->getTetris()->clearBottom(3);
 	start->subMagic(1);
 }
 
 //Dan DMX Goomba
 static void dmx(Player* start, Player* other) {
-	//send 3 junk lines to the other player
+	if(!other->isImmune()) {
+		//send 3 junk lines to the other player
+		start->setLinesToSend(start->LinesToSend()+3);
+	}
 	start->subMagic(2);
 }
 
@@ -61,8 +68,9 @@ static void marioParty(Player* start, Player* other) {
 static void yellowRussian(Player* start, Player* other) {
 	if(!other->isImmune()) {
 		//destroy 18 blocks at random
-
+		other->getTetris()->clearRandom(18);
 		//add 2 junk lines
+		start->setLinesToSend(start->LinesToSend()+2);
 	}
 	start->subMagic(4);
 }
@@ -71,6 +79,8 @@ static void yellowRussian(Player* start, Player* other) {
 //kojima Fulton
 static void fulton(Player* start,Player* other) {
 	//remove the top 3 lines
+	start->getTetris()->clearTop(3);
+	start->subMagic(1);
 }
 
 //kojima Box

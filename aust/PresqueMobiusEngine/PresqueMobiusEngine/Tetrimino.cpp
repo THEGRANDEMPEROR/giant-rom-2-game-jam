@@ -180,6 +180,7 @@ Tetrimino& Tetrimino::operator=(Tetrimino& a_tet) {
 	return *this;
 }
 
+
 bool Tetrimino::isMagic() {
 	for(int i = 0; i < TETRIMINO_SIZE; ++i) {
 		if(blocks[i].getMagic())
@@ -187,3 +188,9 @@ bool Tetrimino::isMagic() {
 	}
 	return false;
 }
+
+
+void Tetrimino::SetBlockMagic(int a_index, bool a_magic) {
+	blocks[a_index].setMagic(a_magic);
+}
+
