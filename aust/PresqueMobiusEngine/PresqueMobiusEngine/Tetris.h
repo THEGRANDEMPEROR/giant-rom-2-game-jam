@@ -16,7 +16,7 @@ const float timetogofastsideways = 0.25f; // The time it takes for it to quickly
 const float timetoslide = 0.5f;
 const float timetoslideholdingdown = 0.1f;
 
-const int xOffsetP1 = 128;
+const int xOffsetP1 = Engine::instance()->width();
 const int yOffsetP1 = 32;
 
 const int xOffsetP2 = 768;
@@ -65,6 +65,7 @@ private:
 	bool iNeedATetrimino;
 	bool needgarbage;
 	bool alive;
+	bool rensa;
 	Tetrimino curtet;
 	spriteStruct bluesprite;
 	spriteStruct magicsprite;
@@ -76,6 +77,12 @@ private:
 	spriteStruct redsprite;
 	spriteStruct yellowsprite;
 
+	// stupid draw stuff
+	int xOffsetP1;
+	int yOffset;
+	int xOffsetP2;
+
+
 
 	void TryToMove(int a_x, float a_y);
 	bool DoICollide(int a_x, float a_y);
@@ -85,18 +92,18 @@ private:
 	// for use after being pushed up. Deathzone should always be empty
 	void ClearDeathZone();
 	
-	
 	int magic;
 	
 public:
 	Tetris();
 	~Tetris();
 	void Init();
+	void Collapse(int a_line);
 
 	void Update(int a_speed,PlayerEffect effect);
 
 	void Draw(int a_player);
-	void Reset(int a_controller);
+	void Reset(int a_controller, bool a_rensa);
 	void setPiece(Tetrimino& piece);
 	void transformMagic();
 

@@ -34,6 +34,10 @@ void tmagic() {
 	Engine::instance()->postMessage("ToggleMagic");
 }
 
+void replay() {
+	Engine::instance()->postMessage("replay");
+}
+
 //void bindcontrollers() {
 //	Engine::instance()->postMessage("BindControllers");
 //}
@@ -114,16 +118,16 @@ void Game::createFinish() {
 	temp.left = 0.33f;
 	temp.right = 0.66f;
 
-	temp.top = 0.5f;
-	temp.bottom = 0.6f;
-	menu.addButton(NULL,"Replay",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
-
-	temp.top = 0.6f;
-	temp.bottom = 0.7f;
-	menu.addButton(charSelect,"Character Select",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
-
 	temp.top = 0.7f;
 	temp.bottom = 0.8f;
+	menu.addButton(replay,"Replay",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+
+	temp.top = 0.8f;
+	temp.bottom = 0.9f;
+	menu.addButton(charSelect,"Character Select",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+
+	temp.top = 0.9f;
+	temp.bottom = 1.0f;
 	menu.addButton(mMenu,"Exit",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
 	Engine::instance()->setRepeat(0.2f);
 }
@@ -386,6 +390,9 @@ bool Game::update() {
 			if(Engine::instance()->getMessage("ToggleMagic")) {
 				_magic = !_magic;
 				createOptions();
+			}
+			if(Engine::instance()->getMessage("replay")) {
+				startTetris();
 			}
 			//if (Engine::instance()->getMessage("BindControllers")) {
 			//	thought about it, and this is actually not necessary since it's only two controllers that are loaded kinda. fuckit man. fuckit.

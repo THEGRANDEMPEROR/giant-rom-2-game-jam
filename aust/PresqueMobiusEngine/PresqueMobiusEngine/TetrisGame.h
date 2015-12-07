@@ -46,7 +46,7 @@ public:
 	void Draw();
 	void BindCont(int a_controller); // 0 keyboard. 1-4 gamepads.
 	void useMagic(Player* otherPlayer);
-	void Reset();
+	void Reset(bool a_rensa);
 	bool needPiece();
 	void setMagic(int magicLevel,void (*magicFunc)(Player*,Player*));
 	int getMagic() {return magic;}
@@ -93,12 +93,17 @@ private:
 	spriteStruct redsprite;
 	spriteStruct yellowsprite;
 	spriteStruct lockedMagicsprite;
+	spriteStruct blueballsprite;
+	spriteStruct redballsprite;
 
-
-	Tetrimino randomTet(); // TETQUEUENO returns a random tetrimino
-	void DrawQueue(); // TETQUEUENO not finished
+	// returns a random tetrimino
+	Tetrimino randomTet(); 
+	// draws the tetqueue
+	void DrawQueue();
 	// cancels out each other's lines if both sides have linestosend. 2 and 1 becomes 1 and 0. 7 and 2 becomes 5 and 0
 	void CancelOutLines();
+	// draws the win/loss balls
+	void DrawWinLoss();
 public:
 	TetrisGame();
 	~TetrisGame();

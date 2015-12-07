@@ -55,10 +55,10 @@ void Engine::update() {
 }
 
 void Engine::shutdown() {
+	resMan.release();
 	sFrame.shutdown();
 	vFrame.shutdown();
 	inputSys.shutdown();
-	resMan.release();
 }
 
 bool Engine::isLost() {

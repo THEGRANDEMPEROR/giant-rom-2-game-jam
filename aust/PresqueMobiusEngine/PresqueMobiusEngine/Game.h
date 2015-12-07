@@ -34,6 +34,7 @@ private:
 
 	//menu stuff
 	spriteStruct backGround;
+	spriteStruct gamelogo;
 	MenuSystem menu;
 	bool play;
 	void createMenu();
@@ -60,6 +61,11 @@ private:
 	TetrisGame tetris;
 	int p1cont;
 	int p2cont;
+
+	//Sound stuff
+	soundStruct click;
+	soundStruct rollover;
+	vector soundvec;
 
 	double fps;
 	char buffer[256];

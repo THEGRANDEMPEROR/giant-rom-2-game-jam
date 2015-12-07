@@ -157,8 +157,11 @@ void Tetris::Init() {
 	curtet.Init(LINE, true);
 	magic = 0;
 	alive = true;
+	xOffsetP1 = Engine::instance()->width() / 10 + (Engine::instance()->width() / 40);
+	xOffsetP2 = (Engine::instance()->width() / 10) + (Engine::instance()->width() / 20) + (Engine::instance()->width() / 2);
+	yOffset = Engine::instance()->height() / 45;
 
-
+	rensa = false;
 }
 
 TetriminoType Tetris::curType() {
@@ -331,10 +334,10 @@ void Tetris::Draw(int a_player) {
 					D3DXMatrixIdentity(&tempinfo.matrix);
 
 					if (a_player == 0) {
-						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffsetP1), 0.0f);
+						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffset), 0.0f);
 					}
 					else {
-						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffsetP2), 0.0f);
+						D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*y + yOffset), 0.0f);
 					}
 					D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 					D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
@@ -377,10 +380,10 @@ void Tetris::Draw(int a_player) {
 			D3DXMatrixIdentity(&tempinfo.matrix);
 
 			if (a_player == 0) {
-				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP1), 0.0f);
+				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP1), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffset), 0.0f);
 			}
 			else {
-				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffsetP2), 0.0f);
+				D3DXMatrixTranslation(&translation, (((spriteStruct*)tempinfo.asset)->rec.right*curtet.getBlock(i).getPos().x + xOffsetP2), (((spriteStruct*)tempinfo.asset)->rec.bottom*curtet.getBlock(i).getPos().y + yOffset), 0.0f);
 			}
 			D3DXMatrixScaling(&scaling, 1.0f, 1.0f, 1.0f);
 			D3DXMatrixMultiply(&tempinfo.matrix, &scaling, &translation);
@@ -400,11 +403,12 @@ void Tetris::Draw(int a_player) {
 }
 
 
-void Tetris::Reset(int a_controller) {
+void Tetris::Reset(int a_controller, bool a_rensa) {
 	numlines = 0;
 	speed = 1;
 	linestosend = 0;
 	magic = 0;
+	rensa = a_rensa;
 	//curtet = randomTet();
 	for (int x = 0; x < FIELD_SIZE_X; ++x) {
 		for (int y = 0; y < FIELD_SIZE_Y; ++y) {
@@ -536,6 +540,8 @@ int Tetris::checkAllLines() {
 	}
 
 	// put rensa drop here, using lowestline, for now nothing RENSA RENSA RENSA
+	if (rensa && numlines > 0)
+		Collapse(lowestline);
 
 
 	return numlines;
@@ -558,6 +564,7 @@ void Tetris::removeLine(int a_line) {
 	for (int x = 0; x < FIELD_SIZE_X; ++x) {
 		field[x][0].setStuff(EMPTY);
 	}
+	
 
 }
 
@@ -724,6 +731,34 @@ void Tetris::clearBottom(int linesToClear) {
 	}
 }
 
+
+void Tetris::Collapse(int a_line) {
+
+	int y2 = 0;
+	for (int x = 0; x < FIELD_SIZE_X; ++x) { 
+		for (int y = a_line; y > 0; --y) {				// from the bottom up, for each 
+			if (field[x][y].getStuff() != EMPTY) {      // nonempty space
+				y2 = y + 1;
+				while (field[x][y2].getStuff() == EMPTY && y2 < FIELD_SIZE_Y) { // check if it can move down and move down as far as you can
+					++y2;
+				}
+				--y2; // go back up one spot
+				if (y != y2) { // if there was a change,
+					field[x][y2].setStuff(field[x][y].getStuff()); // move it down
+					field[x][y].setStuff(EMPTY);					// then empty it out
+				}
+			}
+		}
+	}
+	// after, there could definitely be lines so let's call checkalllines again, since it'll only call collapse again if there is a line.
+	linestosend += checkAllLines();
+}
+
+
+
+
+
+
 bool Tetris::isEmpty(int line) {
 	for(int i = 0; i < FIELD_SIZE_X; ++i) {
 		if(field[i][line].getStuff() != EMPTY ) {
@@ -761,7 +796,7 @@ void Tetris::clearRandom(int num) {
 	}
 	int ran;
 	while(num > 0) {
-		ran = rand()%num;
+		ran = rand()%loc.size();
 		field[loc[ran].x][loc[ran].y].setStuff(EMPTY);
 		loc.erase(loc.begin()+ran);
 		--num;

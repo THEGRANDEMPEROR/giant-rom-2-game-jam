@@ -10,6 +10,7 @@ static void noPower(Player* start,Player* other) {
 static void grenade(Player* start, Player* other) {
 	//destory 3x3 block
 	//renso drop
+	start->getTetris()->Collapse(FIELD_SIZE_Y-1);
 	start->subMagic(1);
 }
 
