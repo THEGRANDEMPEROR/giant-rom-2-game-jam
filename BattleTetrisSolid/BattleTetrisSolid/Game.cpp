@@ -169,8 +169,8 @@ void Game::init() {
 	gamelogo.rec.bottom = gamelogo.image->texInfo.Height;
 	gamelogo.center = D3DXVECTOR3(gamelogo.rec.right/2.0f,gamelogo.rec.bottom/2.0f,0);
 
-	click.asset = (soundAsset)Engine::instance()->getResource("click.ogg", audio)->resource;
-	rollover.asset = (soundAsset)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
+	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
 	soundvec.x = 0;
 	soundvec.y = 0;
 	soundvec.z = 0;
