@@ -169,6 +169,12 @@ void Game::init() {
 	gamelogo.rec.bottom = gamelogo.image->texInfo.Height;
 	gamelogo.center = D3DXVECTOR3(gamelogo.rec.right/2.0f,gamelogo.rec.bottom/2.0f,0);
 
+	click.asset = (soundAsset)Engine::instance()->getResource("click.ogg", audio)->resource;
+	rollover.asset = (soundAsset)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	soundvec.x = 0;
+	soundvec.y = 0;
+	soundvec.z = 0;
+
 	CharacterInfo tempChar;
 	tempChar.icon.rec.top = 0;
 	tempChar.icon.rec.left = 0;
@@ -313,6 +319,14 @@ void Game::init() {
 	}
 	srand(timeGetTime());
 	createMenu();
+
+	
+
+
+
+
+
+
 }
 
 void Game::shutdown() {
@@ -381,6 +395,7 @@ bool Game::update() {
 			if(!p1Lock) {
 				if (Engine::instance()->getFlags("SelectionUp")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionUpDpad")&buttonFlags::_repeat) {
 					--p1Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				}
 				else if (Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDownDpad")&buttonFlags::_repeat) {
 					++p1Select;
