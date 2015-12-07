@@ -38,6 +38,7 @@ private:
 	spriteStruct gamelogo;
 	MenuSystem menu;
 	bool play;
+	bool p1Won;
 	void createMenu();
 	void createOptions();
 	void createHelp();
@@ -68,6 +69,7 @@ private:
 	//Sound stuff
 	soundStruct click;
 	soundStruct rollover;
+	soundStruct youwin;
 	vector soundvec;
 
 	double fps;

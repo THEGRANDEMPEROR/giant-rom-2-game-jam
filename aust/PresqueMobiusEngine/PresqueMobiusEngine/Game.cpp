@@ -177,6 +177,7 @@ void Game::init() {
 	menu.init(); // for sound
 	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
 	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	youwin = *(soundStruct*)Engine::instance()->getResource("youwin.ogg", audio)->resource;
 	soundvec.x = 0;
 	soundvec.y = 0;
 	soundvec.z = 0;
@@ -338,9 +339,14 @@ void Game::init() {
 	srand(timeGetTime());
 	createMenu();
 
-	
-
-
+	for(int i = 0; i < 4; ++i) {
+		p1Power[i].color = 0xFFFF0000;
+		p1Power[i].flags = DT_CENTER;
+		p1Power[i].text = "ERROR";
+		p2Power[i].color = 0xFF0000FF;
+		p2Power[i].flags = DT_CENTER;
+		p2Power[i].text = "ERROR";
+	}
 
 
 
@@ -363,6 +369,7 @@ void Game::startTetris() {
 
 bool Game::update() {
 	frect tempRec;
+	char buffer[256];
 	if(curState != gplay) {
 		if(curState != cselect) {
 			menu.update();
@@ -370,8 +377,31 @@ bool Game::update() {
 			tempInfo.type = screenSprite;
 			tempInfo.asset = &backGround;
 			D3DXMatrixIdentity(&tempInfo.matrix);
-			D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/4,0);
+			if(curState != finish) {
+				D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/4,0);
+			} else {
+				D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/2,0);
+			}
 			Engine::instance()->addRender(tempInfo);
+			if(curState == finish) {
+				tempInfo.type = text;
+				tempRec.top = 0.1f;
+				tempRec.bottom = 0.2f;
+				tempRec.left = 0.0f;
+				tempRec.right = 1.0f;
+				if(p1Won) {
+					sprintf(buffer,"%s WINS!",charList[p1Select].name.c_str());
+					p1Name.text = buffer;
+					p1Name.rect = tempRec;
+					tempInfo.asset = &p1Name;
+				} else {
+					sprintf(buffer,"%s WINS!",charList[p2Select].name.c_str());
+					p2Name.text = buffer;
+					p2Name.rect = tempRec;
+					tempInfo.asset = &p2Name;
+				}
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			if(Engine::instance()->getMessage("CharSelect")) {
 				menu.resetSelection();
@@ -472,6 +502,18 @@ bool Game::update() {
 			p1Name.rect = tempRec;
 			tempInfo.asset = &p1Name;
 			Engine::instance()->addRender(tempInfo);
+			//p1 magic
+			tempRec.left = 0.0f;
+			tempRec.right = 0.5f;
+
+			for(int i = 0; i < 4; ++i) {
+				tempRec.top = 0.6f+(i*0.1f);
+				tempRec.bottom = 0.7f+(i*0.1f);
+				p1Power[i].text = charList[p1Select].aName[i];
+				p1Power[i].rect = tempRec;
+				tempInfo.asset = &p1Power[i];
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			if(p2Lock) {
 				tempRec.top = 0.1f;
@@ -486,10 +528,22 @@ bool Game::update() {
 				tempRec.right = 0.6f;
 				p2Name.text = "P2";
 			}
-
 			p2Name.rect = tempRec;
 			tempInfo.asset = &p2Name;
 			Engine::instance()->addRender(tempInfo);
+
+			//p2 magic
+			tempRec.left = 0.5f;
+			tempRec.right = 1.0f;
+
+			for(int i = 0; i < 4; ++i) {
+				tempRec.top = 0.6f+(i*0.1f);
+				tempRec.bottom = 0.7f+(i*0.1f);
+				p2Power[i].text = charList[p2Select].aName[i];
+				p2Power[i].rect = tempRec;
+				tempInfo.asset = &p2Power[i];
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			tempInfo.type = screenSprite;
 			for(int i = 0; i < charList.size(); ++i) {
@@ -519,11 +573,15 @@ bool Game::update() {
 						// to get to my other comments showing where things are.
 						// never mind these comments
 		if(Engine::instance()->getMessage("P1Wins")) {
+			p1Won = true;
 			createFinish();
 			backGround = charList[p1Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		} else if(Engine::instance()->getMessage("P2Wins")) {
+			p1Won = false;
 			createFinish();
 			backGround = charList[p2Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		}
 	}
 

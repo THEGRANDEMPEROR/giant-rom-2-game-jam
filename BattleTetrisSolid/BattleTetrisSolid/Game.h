@@ -38,6 +38,7 @@ private:
 	spriteStruct gamelogo;
 	MenuSystem menu;
 	bool play;
+	bool p1Won;
 	void createMenu();
 	void createOptions();
 	void createHelp();
