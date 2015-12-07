@@ -169,6 +169,8 @@ void Game::init() {
 	gamelogo.rec.bottom = gamelogo.image->texInfo.Height;
 	gamelogo.center = D3DXVECTOR3(gamelogo.rec.right/2.0f,gamelogo.rec.bottom/2.0f,0);
 
+
+	menu.init(); // for sound
 	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
 	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
 	soundvec.x = 0;
@@ -399,8 +401,10 @@ bool Game::update() {
 				}
 				else if (Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDownDpad")&buttonFlags::_repeat) {
 					++p1Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_pushed) {
 					p1Lock = true;
+					Engine::instance()->playSound(click, soundvec, soundvec);
 				}
 
 				if(p1Select < 0) {
@@ -413,11 +417,14 @@ bool Game::update() {
 			if(!p2Lock) {
 				if (Engine::instance()->getFlags("SelectionUp2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionUp2Dpad")&buttonFlags::_repeat) {
 					--p2Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				}
 				else if (Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDown2Dpad")&buttonFlags::_repeat) {
 					++p2Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_pushed) {
 					p2Lock = true;
+					Engine::instance()->playSound(click, soundvec, soundvec);
 				}
 
 				if(p2Select < 0) {

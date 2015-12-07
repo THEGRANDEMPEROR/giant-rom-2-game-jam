@@ -14,8 +14,14 @@ private:
 	int selection;
 	std::vector<Button> buttons;
 	bool hold;
+
+	// sound stuff
+	soundStruct click;
+	soundStruct rollover;
+	vector soundvec;
 public:
 	MenuSystem();
+	void init();
 	void update();
 	void clear();
 	void render();

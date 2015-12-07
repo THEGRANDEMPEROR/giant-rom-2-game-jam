@@ -5,6 +5,15 @@ MenuSystem::MenuSystem() {
 	selection = 0;
 }
 
+void MenuSystem::init() {
+	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
+	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	soundvec.x = 0;
+	soundvec.y = 0;
+	soundvec.z = 0;
+}
+
+
 void MenuSystem::clear() {
 	while(buttons.size())
 		buttons.pop_back();
@@ -16,11 +25,13 @@ void MenuSystem::update() {
 			if(!hold) {
 				--selection;
 				hold = true;
+				Engine::instance()->playSound(rollover, soundvec, soundvec);
 			}
 		} else if(Engine::instance()->getButton("SelectionDown")) {
 			if(!hold) {
 				++selection;
 				hold = true;
+				Engine::instance()->playSound(rollover, soundvec, soundvec);
 			}
 		} else if(Engine::instance()->getButton("Accept")) {
 			if(selection < 0) {
@@ -31,6 +42,7 @@ void MenuSystem::update() {
 
 			if(!hold) {
 				buttons[selection].click();
+				Engine::instance()->playSound(click, soundvec, soundvec);
 				hold = true;
 			}
 		} else {
