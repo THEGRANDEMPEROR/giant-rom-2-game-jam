@@ -193,6 +193,13 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.color = 0xFFFFFFFF;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("drewbackground.jpg",0x00000001)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
@@ -215,6 +222,12 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("Danbackground.jpg",0x00000001)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
@@ -236,6 +249,13 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("KojimaStage.jpg",0x00FFFFFF)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
+
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
@@ -567,11 +587,21 @@ bool Game::update() {
 	}
 	else { // GPLAY!
 		tetris.Update();
+	//draw background
+		tempInfo.type = screenSprite;
+		tempInfo.asset = &charList[p2Select].selectBackground;
+		D3DXMatrixIdentity(&tempInfo.matrix);
+		D3DXMatrixIdentity(&charTrans);
+		D3DXMatrixTranslation(&charTrans,Engine::instance()->width()/2.0f,Engine::instance()->height()/2.0f,0);
+		D3DXMatrixScaling(&tempInfo.matrix,(Engine::instance()->width()*1.0f)/(charList[p2Select].selectBackground.rec.right*1.0f),(Engine::instance()->height()*1.0f)/(charList[p2Select].selectBackground.rec.bottom*1.0f),1.0f);
+		D3DXMatrixMultiply(&tempInfo.matrix,&tempInfo.matrix,&charTrans);
+		Engine::instance()->addRender(tempInfo);
 
 		tetris.Draw(); // SAD AUST IT CRASHES BECAUSE OF THIS I'M GOING TO BED WTF IS WRONG AAAAAAAAAAAAHHHHHHHHHHHHHHHHHHH
 						// CTRL+F FOR: dammitrender
 						// to get to my other comments showing where things are.
 						// never mind these comments
+		
 		if(Engine::instance()->getMessage("P1Wins")) {
 			p1Won = true;
 			createFinish();
