@@ -162,6 +162,22 @@ void Tetris::Init() {
 	yOffset = Engine::instance()->height() / 45;
 
 	rensa = false;
+
+
+	// sounds
+	bump = *(soundStruct*)Engine::instance()->getResource("bump.ogg", audio)->resource;
+	rotateclockwise = *(soundStruct*)Engine::instance()->getResource("rotateClockwise.ogg", audio)->resource;
+	rotatecclockwise = *(soundStruct*)Engine::instance()->getResource("rotateCClockwise.ogg", audio)->resource;
+	solidify = *(soundStruct*)Engine::instance()->getResource("solidify.ogg", audio)->resource;
+	yayline = *(soundStruct*)Engine::instance()->getResource("yayline.ogg", audio)->resource;
+	yaytetris = *(soundStruct*)Engine::instance()->getResource("yaytetris.ogg", audio)->resource;
+
+
+	soundvec.x = 0;
+	soundvec.y = 0;
+	soundvec.z = 0;
+
+
 }
 
 TetriminoType Tetris::curType() {
@@ -458,6 +474,8 @@ void Tetris::TryToMove(int a_x, float a_y) {
 			curtet.Move(a_x, a_y);
 
 		}
+		else
+			Engine::instance()->playSound(bump, soundvec, soundvec);
 	}
 	if (a_y != 0.0f) { // if you're moving up or down, (always down)
 		if (!DoICollide(a_x, a_y)) { // if you don't collide, move
@@ -471,8 +489,11 @@ void Tetris::TryToMove(int a_x, float a_y) {
 					curtet.Move(0, 1.0f);
 				}
 			}
+			if (timesliding == 0.0f)
+				Engine::instance()->playSound(bump, soundvec, soundvec);
 			if (timesliding > timetoslide || Engine::instance()->getBind("Pad 1 Down DPAD") && controller == 1 && timesliding > timetoslideholdingdown || Engine::instance()->getBind("Pad 2 Down DPAD") && controller == 2 && timesliding > timetoslideholdingdown) {
 				Solidify();
+				Engine::instance()->playSound(solidify, soundvec, soundvec);
 				needgarbage = true;
 				timesliding = 0.0f;
 			}
@@ -543,7 +564,12 @@ int Tetris::checkAllLines() {
 	if (rensa && numlines > 0)
 		Collapse(lowestline);
 
-
+	if (numlines >= 4) {
+		Engine::instance()->playSound(yaytetris, soundvec, soundvec);
+	}
+	else if (numlines > 0) {
+		Engine::instance()->playSound(yayline, soundvec, soundvec);
+	}
 	return numlines;
 
 }
@@ -611,6 +637,12 @@ void Tetris::Rotate(bool clockwise) {
 				curtet.SetBlockPos(i, fallingpos(temppos[i].x, temppos[i].y));
 			}
 		}
+		else {
+			if (clockwise)
+				Engine::instance()->playSound(rotateclockwise, soundvec, soundvec);
+			else
+				Engine::instance()->playSound(rotatecclockwise, soundvec, soundvec);
+		}
 
 		curtet.Move(0, roundingthing);
 	}
@@ -638,6 +670,10 @@ void Tetris::Rotate(bool clockwise) {
 
 			curtet.SetBlockMagic(newmagic, true);
 		}
+		if (clockwise)
+			Engine::instance()->playSound(rotateclockwise, soundvec, soundvec);
+		else
+			Engine::instance()->playSound(rotatecclockwise, soundvec, soundvec);
 
 
 

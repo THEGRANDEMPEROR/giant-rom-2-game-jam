@@ -173,8 +173,11 @@ void Game::init() {
 	gamelogo.rec.bottom = gamelogo.image->texInfo.Height;
 	gamelogo.center = D3DXVECTOR3(gamelogo.rec.right/2.0f,gamelogo.rec.bottom/2.0f,0);
 
+
+	menu.init(); // for sound
 	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
 	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	youwin = *(soundStruct*)Engine::instance()->getResource("youwin.ogg", audio)->resource;
 	soundvec.x = 0;
 	soundvec.y = 0;
 	soundvec.z = 0;
@@ -185,38 +188,59 @@ void Game::init() {
 	tempChar.icon.color = 0xFFFFFFFF;
 
 	//Drew Scanlon
-	tempChar.name = "Drew Scanlon";
+	tempChar.name = "Solid Scanlon";
 	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DrewScanlon.jpg",image)->resource;
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.color = 0xFFFFFFFF;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("drewbackground.jpg",0x00000001)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = grenade;
+	tempChar.aName[0] = "Grenade";
 	tempChar.abilities[1] = goodPosture;
+	tempChar.aName[1] = "Good Posture";
 	tempChar.abilities[2] = scalonSpecial;
+	tempChar.aName[2] = "The Scanlon Special";
 	tempChar.abilities[3] = tricaster;
+	tempChar.aName[3] = "Tricaster Master";
 
 	charList.push_back(tempChar);
 
 	//Dan Ryckert
-	tempChar.name = "Dan Ryckert";
+	tempChar.name = "Dirty Dan Ryckert";
 	tempChar.icon.image = (imageAsset*)Engine::instance()->getResource("DanRyckert.jpg",image)->resource;
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("Danbackground.jpg",0x00000001)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = powBlock;
+	tempChar.aName[0] = "Pow Block";
 	tempChar.abilities[1] = dmx;
+	tempChar.aName[1] = "DMX Goomba";
 	tempChar.abilities[2] = marioParty;
+	tempChar.aName[2] = "Mario Party Party";
 	tempChar.abilities[3] = yellowRussian;
+	tempChar.aName[3] = "Yellow Russian";
 
 	charList.push_back(tempChar);
 
@@ -225,15 +249,26 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.selectBackground.rec.left = 0;
+	tempChar.selectBackground.rec.top = 0;
+	tempChar.selectBackground.image = (imageAsset*)Engine::instance()->getResource("KojimaStage.jpg",0x00FFFFFF)->resource;
+	tempChar.selectBackground.rec.right = tempChar.selectBackground.image->texInfo.Width;
+	tempChar.selectBackground.rec.bottom = tempChar.selectBackground.image->texInfo.Height;
+	tempChar.selectBackground.center = D3DXVECTOR3(tempChar.selectBackground.rec.right/2.0f,tempChar.selectBackground.rec.bottom/2.0f,0);
+
 	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
 	}
 	tempChar.abilities[0] = fulton;
+	tempChar.aName[0] = "Fulton";
 	tempChar.abilities[1] = cardboardBox;
+	tempChar.aName[1] = "Cardboard Box";
 	tempChar.abilities[2] = tookSoLong;
+	tempChar.aName[2] = "What took you so long?";
 	tempChar.abilities[3] = gop;
+	tempChar.aName[3] = "Guns of the Patriots";
 
 	charList.push_back(tempChar);
 	Engine::instance()->setRepeat(0.2f);
@@ -324,9 +359,14 @@ void Game::init() {
 	srand(timeGetTime());
 	createMenu();
 
-	
-
-
+	for(int i = 0; i < 4; ++i) {
+		p1Power[i].color = 0xFFFF0000;
+		p1Power[i].flags = DT_CENTER;
+		p1Power[i].text = "ERROR";
+		p2Power[i].color = 0xFF0000FF;
+		p2Power[i].flags = DT_CENTER;
+		p2Power[i].text = "ERROR";
+	}
 
 
 
@@ -349,6 +389,7 @@ void Game::startTetris() {
 
 bool Game::update() {
 	frect tempRec;
+	char buffer[256];
 	if(curState != gplay) {
 		if(curState != cselect) {
 			menu.update();
@@ -356,8 +397,31 @@ bool Game::update() {
 			tempInfo.type = screenSprite;
 			tempInfo.asset = &backGround;
 			D3DXMatrixIdentity(&tempInfo.matrix);
-			D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/4,0);
+			if(curState != finish) {
+				D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/4,0);
+			} else {
+				D3DXMatrixTranslation(&tempInfo.matrix,Engine::instance()->width()/2,Engine::instance()->height()/2,0);
+			}
 			Engine::instance()->addRender(tempInfo);
+			if(curState == finish) {
+				tempInfo.type = text;
+				tempRec.top = 0.1f;
+				tempRec.bottom = 0.2f;
+				tempRec.left = 0.0f;
+				tempRec.right = 1.0f;
+				if(p1Won) {
+					sprintf(buffer,"%s WINS!",charList[p1Select].name.c_str());
+					p1Name.text = buffer;
+					p1Name.rect = tempRec;
+					tempInfo.asset = &p1Name;
+				} else {
+					sprintf(buffer,"%s WINS!",charList[p2Select].name.c_str());
+					p2Name.text = buffer;
+					p2Name.rect = tempRec;
+					tempInfo.asset = &p2Name;
+				}
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			if(Engine::instance()->getMessage("CharSelect")) {
 				menu.resetSelection();
@@ -406,8 +470,10 @@ bool Game::update() {
 				}
 				else if (Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDownDpad")&buttonFlags::_repeat) {
 					++p1Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_pushed) {
 					p1Lock = true;
+					Engine::instance()->playSound(click, soundvec, soundvec);
 				}
 
 				if(p1Select < 0) {
@@ -420,11 +486,14 @@ bool Game::update() {
 			if(!p2Lock) {
 				if (Engine::instance()->getFlags("SelectionUp2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionUp2Dpad")&buttonFlags::_repeat) {
 					--p2Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				}
 				else if (Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDown2Dpad")&buttonFlags::_repeat) {
 					++p2Select;
+					Engine::instance()->playSound(rollover, soundvec, soundvec);
 				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_pushed) {
 					p2Lock = true;
+					Engine::instance()->playSound(click, soundvec, soundvec);
 				}
 
 				if(p2Select < 0) {
@@ -453,6 +522,18 @@ bool Game::update() {
 			p1Name.rect = tempRec;
 			tempInfo.asset = &p1Name;
 			Engine::instance()->addRender(tempInfo);
+			//p1 magic
+			tempRec.left = 0.0f;
+			tempRec.right = 0.5f;
+
+			for(int i = 0; i < 4; ++i) {
+				tempRec.top = 0.6f+(i*0.1f);
+				tempRec.bottom = 0.7f+(i*0.1f);
+				p1Power[i].text = charList[p1Select].aName[i];
+				p1Power[i].rect = tempRec;
+				tempInfo.asset = &p1Power[i];
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			if(p2Lock) {
 				tempRec.top = 0.1f;
@@ -467,10 +548,22 @@ bool Game::update() {
 				tempRec.right = 0.6f;
 				p2Name.text = "P2";
 			}
-
 			p2Name.rect = tempRec;
 			tempInfo.asset = &p2Name;
 			Engine::instance()->addRender(tempInfo);
+
+			//p2 magic
+			tempRec.left = 0.5f;
+			tempRec.right = 1.0f;
+
+			for(int i = 0; i < 4; ++i) {
+				tempRec.top = 0.6f+(i*0.1f);
+				tempRec.bottom = 0.7f+(i*0.1f);
+				p2Power[i].text = charList[p2Select].aName[i];
+				p2Power[i].rect = tempRec;
+				tempInfo.asset = &p2Power[i];
+				Engine::instance()->addRender(tempInfo);
+			}
 
 			tempInfo.type = screenSprite;
 			for(int i = 0; i < charList.size(); ++i) {
@@ -494,17 +587,31 @@ bool Game::update() {
 	}
 	else { // GPLAY!
 		tetris.Update();
+	//draw background
+		tempInfo.type = screenSprite;
+		tempInfo.asset = &charList[p2Select].selectBackground;
+		D3DXMatrixIdentity(&tempInfo.matrix);
+		D3DXMatrixIdentity(&charTrans);
+		D3DXMatrixTranslation(&charTrans,Engine::instance()->width()/2.0f,Engine::instance()->height()/2.0f,0);
+		D3DXMatrixScaling(&tempInfo.matrix,(Engine::instance()->width()*1.0f)/(charList[p2Select].selectBackground.rec.right*1.0f),(Engine::instance()->height()*1.0f)/(charList[p2Select].selectBackground.rec.bottom*1.0f),1.0f);
+		D3DXMatrixMultiply(&tempInfo.matrix,&tempInfo.matrix,&charTrans);
+		Engine::instance()->addRender(tempInfo);
 
 		tetris.Draw(); // SAD AUST IT CRASHES BECAUSE OF THIS I'M GOING TO BED WTF IS WRONG AAAAAAAAAAAAHHHHHHHHHHHHHHHHHHH
 						// CTRL+F FOR: dammitrender
 						// to get to my other comments showing where things are.
 						// never mind these comments
+		
 		if(Engine::instance()->getMessage("P1Wins")) {
+			p1Won = true;
 			createFinish();
 			backGround = charList[p1Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		} else if(Engine::instance()->getMessage("P2Wins")) {
+			p1Won = false;
 			createFinish();
 			backGround = charList[p2Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		}
 	}
 
