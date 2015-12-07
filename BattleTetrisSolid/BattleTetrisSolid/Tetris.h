@@ -84,7 +84,6 @@ private:
 	soundStruct solidify;
 	soundStruct yayline;
 	soundStruct yaytetris;
-	soundStruct youwin;
 	vector soundvec;
 
 	// stupid draw stuff

@@ -65,6 +65,7 @@ private:
 	//Sound stuff
 	soundStruct click;
 	soundStruct rollover;
+	soundStruct youwin;
 	vector soundvec;
 
 	double fps;
