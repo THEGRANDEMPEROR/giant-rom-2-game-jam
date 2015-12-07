@@ -796,7 +796,7 @@ void Tetris::clearRandom(int num) {
 	}
 	int ran;
 	while(num > 0) {
-		ran = rand()%num;
+		ran = rand()%loc.size();
 		field[loc[ran].x][loc[ran].y].setStuff(EMPTY);
 		loc.erase(loc.begin()+ran);
 		--num;

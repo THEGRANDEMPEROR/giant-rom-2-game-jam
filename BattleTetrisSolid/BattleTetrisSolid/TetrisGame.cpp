@@ -347,6 +347,7 @@ void TetrisGame::Update() {
 			if (p2wins < MAXWINS) // p2 doesn't win yet
 				Reset(magic, rensa, false);
 			else {
+				Engine::instance()->postMessage("P2Wins");
 				Reset(magic, rensa, true); // MOVE THIS I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
 				// move to the Rematch, charselect, main menu screen
 			}
@@ -356,6 +357,7 @@ void TetrisGame::Update() {
 			if (p1wins < MAXWINS) // p1 doesn't win yet
 				Reset(magic, rensa, false);
 			else {
+				Engine::instance()->postMessage("P1Wins");
 				Reset(magic, rensa, true); // MOVE THIS, I JUST WANTED IT TO DO SOMETHING SO I PUT THIS HERE
 				// move to the Rematch, charselect, main menu screen
 			}

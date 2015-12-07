@@ -63,6 +63,7 @@ void Game::createMenu() {
 	temp.top = 0.8f;
 	temp.bottom = 0.9f;
 	menu.addButton(quit,"Quit",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+	backGround = gamelogo;
 }
 
 void Game::createOptions() {
@@ -124,6 +125,7 @@ void Game::createFinish() {
 	temp.top = 0.7f;
 	temp.bottom = 0.8f;
 	menu.addButton(mMenu,"Exit",temp,DT_CENTER,0xFFFFFFFF,0xFFFF0000);
+	Engine::instance()->setRepeat(0.2f);
 }
 
 Game::Game() {
@@ -159,13 +161,13 @@ Game::~Game() {
 }
 
 void Game::init() {
-	backGround.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",D3DXCOLOR(255,0,0,0))->resource;
-	backGround.color = 0xFFFFFFFF;
-	backGround.rec.left = 0;
-	backGround.rec.top = 0;
-	backGround.rec.right = backGround.image->texInfo.Width;
-	backGround.rec.bottom = backGround.image->texInfo.Height;
-	backGround.center = D3DXVECTOR3(backGround.rec.right/2.0f,backGround.rec.bottom/2.0f,0);
+	gamelogo.image = (imageAsset*)Engine::instance()->getResource("LogoAlt.png",D3DXCOLOR(255,0,0,0))->resource;
+	gamelogo.color = 0xFFFFFFFF;
+	gamelogo.rec.left = 0;
+	gamelogo.rec.top = 0;
+	gamelogo.rec.right = gamelogo.image->texInfo.Width;
+	gamelogo.rec.bottom = gamelogo.image->texInfo.Height;
+	gamelogo.center = D3DXVECTOR3(gamelogo.rec.right/2.0f,gamelogo.rec.bottom/2.0f,0);
 
 	CharacterInfo tempChar;
 	tempChar.icon.rec.top = 0;
@@ -178,6 +180,7 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
@@ -195,6 +198,7 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
@@ -211,6 +215,7 @@ void Game::init() {
 	tempChar.icon.rec.right = tempChar.icon.image->texInfo.Width;
 	tempChar.icon.rec.bottom = tempChar.icon.image->texInfo.Height;
 	tempChar.icon.center = D3DXVECTOR3(tempChar.icon.rec.right/2.0f,tempChar.icon.rec.bottom/2.0f,0);
+	tempChar.victoryBackground = tempChar.icon;
 
 	for(int i = 0; i < 4; ++i) {
 		tempChar.abilities[i] = noPower;
@@ -306,6 +311,8 @@ void Game::init() {
 		// player 2 gamepad 1
 		tetris.BindPlayer(1, 0); // second player. gamepads are 1-4 so first gamepad.
 	}
+	srand(timeGetTime());
+	createMenu();
 }
 
 void Game::shutdown() {
@@ -377,7 +384,7 @@ bool Game::update() {
 				}
 				else if (Engine::instance()->getFlags("SelectionDown")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDownDpad")&buttonFlags::_repeat) {
 					++p1Select;
-				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_repeat) {
+				} else if(Engine::instance()->getFlags("Accept")&buttonFlags::_pushed) {
 					p1Lock = true;
 				}
 
@@ -394,7 +401,7 @@ bool Game::update() {
 				}
 				else if (Engine::instance()->getFlags("SelectionDown2")&buttonFlags::_repeat || Engine::instance()->getFlags("SelectionDown2Dpad")&buttonFlags::_repeat) {
 					++p2Select;
-				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_repeat) {
+				} else if(Engine::instance()->getFlags("Accept2")&buttonFlags::_pushed) {
 					p2Lock = true;
 				}
 
@@ -470,7 +477,13 @@ bool Game::update() {
 						// CTRL+F FOR: dammitrender
 						// to get to my other comments showing where things are.
 						// never mind these comments
-
+		if(Engine::instance()->getMessage("P1Wins")) {
+			createFinish();
+			backGround = charList[p1Select].victoryBackground;
+		} else if(Engine::instance()->getMessage("P2Wins")) {
+			createFinish();
+			backGround = charList[p2Select].victoryBackground;
+		}
 	}
 
 	if(showFPS) {

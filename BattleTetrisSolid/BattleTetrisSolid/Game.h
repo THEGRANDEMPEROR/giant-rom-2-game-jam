@@ -34,6 +34,7 @@ private:
 
 	//menu stuff
 	spriteStruct backGround;
+	spriteStruct gamelogo;
 	MenuSystem menu;
 	bool play;
 	void createMenu();
