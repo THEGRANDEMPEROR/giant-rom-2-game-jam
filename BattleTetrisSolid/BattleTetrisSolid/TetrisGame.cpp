@@ -59,66 +59,34 @@ void Player::setMagic(int level, void(*func)(Player*, Player*)) {
 }
 
 void Player::useMagic(Player* otherPlayer) {
-	if (!isUsingMagic() && !isBlocked()) {
-		if (controller == 0) {
-			if (Engine::instance()->getFlags("Pad 1 Up DPAD")&buttonFlags::_pushed) {
-				if (magic >= 4) {
-					abilities[3](this, otherPlayer);
-				}
-				else {
-					if (magic > 0) {
-						abilities[magic - 1](this, otherPlayer);
+if(!isUsingMagic()&&!isBlocked()) {
+		if(controller == 1) {
+			if(Engine::instance()->getFlags("Pad 1 Up DPAD")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
 					}
 				}
 			}
-		}
-		else {
-			if (Engine::instance()->getFlags("Pad 2 Up DPAD")&buttonFlags::_pushed) {
-				if (magic >= 4) {
-					abilities[3](this, otherPlayer);
+		} else if(controller == 2){
+			if(Engine::instance()->getFlags("Pad 2 Up DPAD")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
+					}
 				}
-				else {
-					if (magic > 0) {
-						abilities[magic - 1](this, otherPlayer);
-
-						if (!isUsingMagic() && !isBlocked()) {
-							if (controller == 1) {
-								if (Engine::instance()->getFlags("Pad 1 Up DPAD")&buttonFlags::_pushed) {
-									if (magic >= 4) {
-										abilities[3](this, otherPlayer);
-									}
-									else {
-										if (magic > 0) {
-											abilities[magic - 1](this, otherPlayer);
-										}
-									}
-								}
-							}
-							else if (controller == 2){
-								if (Engine::instance()->getFlags("Pad 2 Up DPAD")&buttonFlags::_pushed) {
-									if (magic >= 4) {
-										abilities[3](this, otherPlayer);
-									}
-									else {
-										if (magic > 0) {
-											abilities[magic - 1](this, otherPlayer);
-										}
-									}
-								}
-							}
-							else if (controller == 0) {
-								if (Engine::instance()->getFlags("Key Up")&buttonFlags::_pushed) {
-									if (magic >= 4) {
-										abilities[3](this, otherPlayer);
-									}
-									else {
-										if (magic > 0) {
-											abilities[magic - 1](this, otherPlayer);
-										}
-									}
-								}
-							}
-						}
+			}
+		} else if(controller == 0) {
+			if(Engine::instance()->getFlags("Key Up")&buttonFlags::_pushed) {
+				if(magic >= 4) {
+					abilities[3](this,otherPlayer);
+				} else {
+					if(magic > 0) {
+						abilities[magic-1](this,otherPlayer);
 					}
 				}
 			}

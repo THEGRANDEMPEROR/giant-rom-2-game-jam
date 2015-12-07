@@ -91,7 +91,6 @@ private:
 	void Rotate(bool clockwise); // true for clockwise, false for counterclockwise
 	// for use after being pushed up. Deathzone should always be empty
 	void ClearDeathZone();
-	void Collapse(int a_line);
 	
 	int magic;
 	
@@ -99,6 +98,7 @@ public:
 	Tetris();
 	~Tetris();
 	void Init();
+	void Collapse(int a_line);
 
 	void Update(int a_speed,PlayerEffect effect);
 
