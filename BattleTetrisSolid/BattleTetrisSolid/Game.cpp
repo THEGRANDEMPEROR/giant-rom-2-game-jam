@@ -177,6 +177,7 @@ void Game::init() {
 	menu.init(); // for sound
 	click = *(soundStruct*)Engine::instance()->getResource("click.ogg", audio)->resource;
 	rollover = *(soundStruct*)Engine::instance()->getResource("rollover.ogg", audio)->resource;
+	youwin = *(soundStruct*)Engine::instance()->getResource("youwin.ogg", audio)->resource;
 	soundvec.x = 0;
 	soundvec.y = 0;
 	soundvec.z = 0;
@@ -521,9 +522,11 @@ bool Game::update() {
 		if(Engine::instance()->getMessage("P1Wins")) {
 			createFinish();
 			backGround = charList[p1Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		} else if(Engine::instance()->getMessage("P2Wins")) {
 			createFinish();
 			backGround = charList[p2Select].victoryBackground;
+			Engine::instance()->playSound(youwin, soundvec, soundvec);
 		}
 	}
 
