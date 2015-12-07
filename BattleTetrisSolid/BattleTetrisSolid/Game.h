@@ -32,6 +32,7 @@ private:
 	bool showFPS;
 	renInfo tempInfo;
 	textStruct fpsText;
+	musicStruct playing;
 
 	//menu stuff
 	spriteStruct backGround;

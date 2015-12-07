@@ -170,7 +170,9 @@ void Tetris::Init() {
 	rotatecclockwise = *(soundStruct*)Engine::instance()->getResource("rotateCClockwise.ogg", audio)->resource;
 	solidify = *(soundStruct*)Engine::instance()->getResource("solidify.ogg", audio)->resource;
 	yayline = *(soundStruct*)Engine::instance()->getResource("yayline.ogg", audio)->resource;
+	yayline.type = voice;
 	yaytetris = *(soundStruct*)Engine::instance()->getResource("yaytetris.ogg", audio)->resource;
+	yayline.type = voice;
 
 
 	soundvec.x = 0;

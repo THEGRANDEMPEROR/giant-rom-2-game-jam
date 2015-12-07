@@ -506,7 +506,7 @@ void TetrisGame::DrawWinLoss() {
 				D3DXMatrixIdentity(&translation);
 				D3DXMatrixIdentity(&scaling);
 				D3DXMatrixIdentity(&tempinfo.matrix);
-				if (g == 0) {
+				if (g == 1) {
 					tempinfo.asset = &blueballsprite;
 					offset = -(Engine::instance()->width() / 16);
 				}

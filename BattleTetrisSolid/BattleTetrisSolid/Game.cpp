@@ -137,7 +137,7 @@ Game::Game() {
 	_rensa = false;
 	_magic = true;
 
-	showFPS = true;
+	showFPS = false;
 	fpsText.color = 0xFFFFFFFF;
 	fpsText.flags = DT_TOP | DT_NOCLIP;
 
@@ -289,9 +289,10 @@ void Game::init() {
 	//game pad menu bind
 	Engine::instance()->bind(pad1_LYp, "SelectionUp");
 	Engine::instance()->bind(pad1_LYn, "SelectionDown");
-	Engine::instance()->bind(pad1_UP, "SelectionUpDpad");
-	Engine::instance()->bind(pad1_DOWN, "SelectionDownDpad");
+	Engine::instance()->bind(pad1_UP, "SelectionUp");
+	Engine::instance()->bind(pad1_DOWN, "SelectionDown");
 	Engine::instance()->bind(pad1_A, "Accept");
+
 	//keyboard
 	Engine::instance()->bind(UP, "SelectionUp2");
 	Engine::instance()->bind(DOWN, "SelectionDown2");
@@ -326,8 +327,8 @@ void Game::init() {
 		//p2 character select
 		Engine::instance()->bind(pad2_LYp, "SelectionUp2");
 		Engine::instance()->bind(pad2_LYn, "SelectionDown2");
-		Engine::instance()->bind(pad2_UP, "SelectionUp2Dpad");
-		Engine::instance()->bind(pad2_DOWN, "SelectionDown2Dpad");
+		Engine::instance()->bind(pad2_UP, "SelectionUp2");
+		Engine::instance()->bind(pad2_DOWN, "SelectionDown2");
 		Engine::instance()->bind(pad2_A, "Accept2");
 
 
@@ -368,9 +369,10 @@ void Game::init() {
 		p2Power[i].text = "ERROR";
 	}
 
-
-
-
+	Engine::instance()->getsFrame()->setVolume(voice,0.1f);
+	Engine::instance()->getsFrame()->setVolume(music,0.05f);
+	playing = *(musicStruct*)Engine::instance()->getResource("LockDown.mp3",stream)->resource;
+	Engine::instance()->playMusic(playing,false);
 }
 
 void Game::shutdown() {
